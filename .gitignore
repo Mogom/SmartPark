@@ -1,0 +1,14 @@
+# Dependencias y compilados (Front, Back o cualquier subcarpeta)
+node_modules/
+dist/
+out-tsc/
+.angular/
+coverage/
+
+# Entorno
+.env
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
