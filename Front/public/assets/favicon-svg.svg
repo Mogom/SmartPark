@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Bloque azul ocupando todo el espacio disponible con bordes redondeados -->
+  <rect width="100" height="100" rx="25" fill="#4C57F8" />
+  
+  <!-- Letra P centrada y escalada para máxima legibilidad -->
+  <text x="50" y="73" 
+        font-family="'Arial Black', system-ui, sans-serif" 
+        font-size="65" 
+        font-weight="900" 
+        fill="#FFFFFF" 
+        text-anchor="middle">P</text>
+</svg>

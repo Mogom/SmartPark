@@ -1,0 +1,62 @@
+@if (usuarios.administracionDesbloqueada()) {
+  <div class="sp-admin-bar">
+    <span>Modo administración · {{ usuarios.administradorActual() }}</span>
+    <button type="button" (click)="usuarios.bloquearAdministracion()">Bloquear</button>
+  </div>
+  <ng-content />
+} @else {
+  <div class="sp-card lg sp-lock">
+    <div class="sp-lock-icon">🔒</div>
+    <div class="sp-stack-6">
+      <h2 class="sp-lock-title">Solo administración</h2>
+      <p class="sp-p">{{ texto() }}</p>
+    </div>
+
+    @switch (paso()) {
+      @case ('CONTRASENA') {
+        <label class="sp-field">
+          <span class="sp-field-row"><span>Contraseña de administración</span><button type="button" class="sp-btn link" (click)="iniciarRecuperacion()">¿La olvidaste?</button></span>
+          <input class="sp-input" type="password" [(ngModel)]="contrasena" (keydown.enter)="desbloquear()" placeholder="••••">
+        </label>
+        @if (error()) { <div class="sp-msg err">{{ error() }}</div> }
+        <button type="button" class="sp-btn primary block" (click)="desbloquear()">Desbloquear</button>
+        @if (modoEjemplo) { <div class="sp-proto">Datos de ejemplo · administración: Martha Gómez / 9999</div> }
+        <div class="sp-lock-foot">¿Ya no tienes acceso a tu correo o teléfono? Otro administrador puede restablecerla desde Porteros, o escribe a soporte&#64;smartpark.co.</div>
+      }
+      @case ('ENVIAR_CODIGO') {
+        <h3 class="sp-sub">Recuperar contraseña</h3>
+        <div class="sp-field"><span>¿Quién eres?</span>
+          <div class="sp-stack-8">
+            @for (a of usuarios.administradores(); track a.id) {
+              <button type="button" class="sp-option" [class.active]="nombreRecuperacion === a.nombre" (click)="nombreRecuperacion = a.nombre">
+                <span>{{ a.nombre }}</span><small>{{ a.contacto | ocultarContacto }}</small>
+              </button>
+            }
+          </div>
+        </div>
+        <p class="sp-p sm">Enviaremos un código de 6 dígitos al {{ tipoContacto() }} registrado.</p>
+        @if (error()) { <div class="sp-msg err">{{ error() }}</div> }
+        <button type="button" class="sp-btn primary block" (click)="enviarCodigo()">Enviar código</button>
+        <button type="button" class="sp-btn ghost" (click)="cancelar()">Volver</button>
+      }
+      @case ('CODIGO') {
+        <h3 class="sp-sub">Crea una contraseña nueva</h3>
+        <p class="sp-p sm">Enviamos el código a <b class="mono">{{ usuarios.contactoDe(nombreRecuperacion) | ocultarContacto }}</b>.</p>
+        <label class="sp-field">Código
+          <input class="sp-input code" inputmode="numeric" [ngModel]="codigo" (ngModelChange)="alCambiarCodigo($event)" placeholder="000000">
+        </label>
+        <div class="sp-grid-auto-150">
+          <label class="sp-field">Nueva contraseña <input class="sp-input" type="password" [(ngModel)]="contrasenaNueva" placeholder="Mínimo 4"></label>
+          <label class="sp-field">Repetir <input class="sp-input" type="password" [(ngModel)]="confirmacion" placeholder="••••"></label>
+        </div>
+        @if (error()) { <div class="sp-msg err">{{ error() }}</div> }
+        <button type="button" class="sp-btn primary block" (click)="guardar()">Guardar y desbloquear</button>
+        <div class="sp-row-between">
+          <button type="button" class="sp-btn link" (click)="enviarCodigo()">Reenviar código</button>
+          <button type="button" class="sp-btn link muted" (click)="cancelar()">Cancelar</button>
+        </div>
+        @if (codigoEjemplo) { <div class="sp-proto">Datos de ejemplo · código enviado: {{ codigoEjemplo }}</div> }
+      }
+    }
+  </div>
+}

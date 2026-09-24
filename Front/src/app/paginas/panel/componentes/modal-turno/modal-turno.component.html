@@ -1,0 +1,57 @@
+@if (turno.modalAbierto()) {
+  <div class="sp-backdrop" (click)="cerrar()">
+    <div class="sp-modal" (click)="$event.stopPropagation()">
+      <div class="sp-stack-6">
+        <h2>Porteros de turno</h2>
+        <p>Elige 1 o 2 porteros. Para entrar o salir del turno cada uno confirma con su contraseña.</p>
+      </div>
+
+      @if (turno.solicitudAutorizacion(); as solicitud) {
+        <div class="sp-auth-who">
+          <div class="sp-avatar solid lg">{{ solicitud.nombre | iniciales }}</div>
+          <div class="sp-stack-3"><b>{{ solicitud.nombre }}</b><small>{{ subtitulo() }}</small></div>
+        </div>
+        @switch (paso()) {
+          @case ('CONTRASENA') {
+            <label class="sp-field">Contraseña
+              <input class="sp-input" type="password" [(ngModel)]="contrasena" (keydown.enter)="confirmar()" placeholder="••••" autocomplete="off">
+            </label>
+            @if (error()) { <div class="sp-msg err">{{ error() }}</div> }
+            <button type="button" class="sp-btn primary block" (click)="confirmar()">{{ textoBoton() }}</button>
+            <button type="button" class="sp-btn link center" (click)="olvidoContrasena()">¿Olvidaste tu contraseña?</button>
+          }
+          @case ('CODIGO') {
+            <p>Enviamos un código de 6 dígitos a <b>{{ usuarios.contactoDe(solicitud.nombre) | ocultarContacto }}</b>.</p>
+            <label class="sp-field">Código
+              <input class="sp-input code" inputmode="numeric" [ngModel]="codigo" (ngModelChange)="alCambiarCodigo($event)" (keydown.enter)="confirmar()" placeholder="000000">
+            </label>
+            @if (codigoEjemplo) { <div class="sp-proto center">Datos de ejemplo · código: {{ codigoEjemplo }}</div> }
+            @if (error()) { <div class="sp-msg err">{{ error() }}</div> }
+            <button type="button" class="sp-btn primary block" (click)="confirmar()">Verificar código</button>
+            <button type="button" class="sp-btn link center" (click)="olvidoContrasena()">Reenviar código</button>
+          }
+          @case ('NUEVA_CONTRASENA') {
+            <label class="sp-field">Nueva contraseña <input class="sp-input" type="password" [(ngModel)]="contrasenaNueva" placeholder="Mínimo 4 caracteres"></label>
+            <label class="sp-field">Confirmar contraseña <input class="sp-input" type="password" [(ngModel)]="confirmacion" (keydown.enter)="confirmar()" placeholder="Repite la contraseña"></label>
+            @if (error()) { <div class="sp-msg err">{{ error() }}</div> }
+            <button type="button" class="sp-btn primary block" (click)="confirmar()">Guardar y continuar</button>
+          }
+        }
+        <button type="button" class="sp-btn ghost" (click)="turno.solicitudAutorizacion.set(null)">← Volver</button>
+      } @else {
+        <div class="sp-stack-8">
+          @for (p of usuarios.porteros(); track p.id) {
+            <button type="button" class="sp-option lg" [class.active]="turno.porterosEnTurno().includes(p.nombre)" (click)="alternarPortero(p.nombre)">
+              <span class="sp-avatar" [class.solid]="turno.porterosEnTurno().includes(p.nombre)">{{ p.nombre | iniciales }}</span>
+              <span class="grow">{{ p.nombre }}</span>
+              <small>{{ turno.porterosEnTurno().includes(p.nombre) ? 'En turno ✓' : 'Libre' }}</small>
+            </button>
+          }
+        </div>
+        @if (aviso()) { <div class="sp-msg err">{{ aviso() }}</div> }
+        <button type="button" class="sp-btn primary block" (click)="cerrar()">Confirmar turno</button>
+        <button type="button" class="sp-btn link center" (click)="gestionarPorteros()">Gestionar porteros</button>
+      }
+    </div>
+  </div>
+}

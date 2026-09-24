@@ -1,0 +1,52 @@
+<div class="sp-grid">
+  <div class="sp-card lg">
+    <div class="sp-grid-auto-200 end">
+      <label class="sp-field">Placa
+        <input class="sp-input-plate" [ngModel]="formulario.placa" (ngModelChange)="alCambiarPlaca($event)" (keydown.enter)="registrar()" placeholder="ABC123" maxlength="6">
+      </label>
+      <div class="sp-field"><span>Tipo de vehículo</span>
+        <div class="sp-seg tall">
+          @for (t of tiposVehiculo; track t.codigo) {
+            <button type="button" [class.active]="tipo() === t.codigo" (click)="elegirTipo(t.codigo)"><span>{{ t.etiqueta }}</span><small>{{ tarifas.tarifas()[t.codigo].valorHora | moneda }}/h</small></button>
+          }
+        </div>
+      </div>
+    </div>
+    <label class="sp-field">Nombre del visitante
+      <input class="sp-input" [(ngModel)]="formulario.nombreVisitante" (ngModelChange)="error.set('')" placeholder="Nombre y apellido">
+    </label>
+    <div class="sp-grid-auto-160">
+      <label class="sp-field">Casa a la que va
+        <input class="sp-input" [(ngModel)]="formulario.casa" (ngModelChange)="error.set('')" placeholder="Casa 24">
+      </label>
+      <label class="sp-field">Teléfono
+        <input class="sp-input mono" inputmode="numeric" [ngModel]="telefonoConFormato()" (ngModelChange)="alCambiarTelefono($event)" (keydown.enter)="registrar()" placeholder="300 123 4567">
+      </label>
+    </div>
+    <div class="sp-field"><span>Portero que registra <span class="hint">· cambiar pide contraseña</span></span>
+      <div class="sp-chips">
+        @for (portero of turno.porterosEnTurno(); track portero) {
+          <button type="button" class="sp-chip" [class.active]="turno.porteroActivo() === portero" (click)="turno.solicitarCambio(portero)">{{ portero }}</button>
+        }
+      </div>
+    </div>
+    @if (error()) { <div class="sp-msg err">{{ error() }}</div> }
+    <button type="button" class="sp-btn primary lg block" [disabled]="guardando()" (click)="registrar()">Registrar entrada <span class="mono soft">{{ hora() }}</span></button>
+  </div>
+
+  <div class="sp-stack-14">
+    <div class="sp-card">
+      <div class="sp-row-between"><h2 class="sp-title">Así se cobrará</h2><b class="mono accent">{{ valorHora() | moneda }}/h</b></div>
+      <p class="sp-p">{{ tarifas.textoRegla() }}</p>
+      <div class="sp-grid-2 tight">
+        @for (ejemplo of ejemplosCobro(); track ejemplo.etiqueta) { <div class="sp-tile"><span>{{ ejemplo.etiqueta }}</span><b>{{ ejemplo.valor | moneda }}</b></div> }
+      </div>
+    </div>
+    <div class="sp-card">
+      <h2 class="sp-title">Cupos libres</h2>
+      <div class="sp-grid-2 tight">
+        @for (o of visitas.ocupacion(); track o.tipo) { <div class="sp-tile col"><span>{{ o.etiqueta }}</span><b class="xl">{{ o.libres }}</b></div> }
+      </div>
+    </div>
+  </div>
+</div>

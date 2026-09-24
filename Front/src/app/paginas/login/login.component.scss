@@ -1,0 +1,69 @@
+$ink: #0D1321;
+$night: #0A1128;
+$blue: #3D5AFE;
+$blue-h: #2F4AE0;
+$blue-50: #EBEEFF;
+$bg: #F4F6FA;
+$line: #D5DAE3;
+$muted: #5B6474;
+$red: #D92D20;
+$red-bg: #FEF0EE;
+$sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+$img: '/assets/login-parqueadero.png';
+
+:host { display: block; }
+* { box-sizing: border-box; }
+
+.login {
+  min-height: 100vh; background: $bg; color: $ink; font-family: $sans; -webkit-font-smoothing: antialiased;
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  @media (min-width: 700px) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.login__art {
+  position: relative; min-height: 260px; padding: clamp(28px, 4vw, 48px);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  background-color: $night;
+  background-image:
+    linear-gradient(180deg, rgba(10,17,40,.9) 0%, rgba(10,17,40,.55) 14%, rgba(10,17,40,0) 28%, rgba(10,17,40,0) 62%, rgba(10,17,40,.85) 84%, $night 100%),
+    url($img);
+  background-size: cover; background-position: center 35%; background-repeat: no-repeat;
+  @media (min-width: 700px) { min-height: max(560px, 100vh); position: sticky; top: 0; }
+}
+.login__copy { display: flex; flex-direction: column; gap: 16px; max-width: 460px;
+  h2 { margin: 0; font: 800 clamp(24px, 2.6vw, 34px)/1.1 $sans; letter-spacing: -.03em; color: #fff; text-wrap: pretty; }
+  p { margin: 0; font: 500 15px/1.55 $sans; color: #D3D9E5; text-wrap: pretty; } }
+
+.login__side { display: flex; align-items: center; justify-content: center; padding: clamp(24px, 5vw, 56px); }
+.login__form { width: 400px; max-width: 100%; display: flex; flex-direction: column; gap: 20px; }
+
+.brand { align-self: center; display: flex; align-items: center; gap: 12px; text-decoration: none; color: $ink; margin-bottom: 8px;
+  &__logo { width: 52px; height: 52px; border-radius: 14px; background: $blue; color: #fff; display: flex; align-items: center; justify-content: center; font: 800 26px/1 $sans; }
+  &__name { font: 800 30px/1 $sans; letter-spacing: -.02em; span { color: $blue; } } }
+
+.login__title { display: flex; flex-direction: column; gap: 6px;
+  h1 { margin: 0; font: 800 28px/1.1 $sans; letter-spacing: -.02em; }
+  p { margin: 0; font: 500 14px/1.4 $sans; color: $muted; } }
+
+.field { display: flex; flex-direction: column; gap: 8px; font: 600 13px/1.2 $sans; color: $muted;
+  &__row { display: flex; justify-content: space-between; }
+  input { width: 100%; min-height: 52px; border: 1.5px solid $line; border-radius: 10px; padding: 0 14px; background: #fff;
+    font: 500 16px/1 $sans; color: $ink; outline: none; transition: border-color .15s, box-shadow .15s;
+    &::placeholder { color: #98A1B2; }
+    &:focus { border-color: $blue; box-shadow: 0 0 0 3px $blue-50; } } }
+
+.link-btn { border: 0; background: transparent; color: $blue; font: 600 13px/1 $sans; cursor: pointer; padding: 0; }
+.link { font: 600 14px/1 $sans; color: $blue; text-decoration: none; &:hover { color: $blue-h; } }
+
+.login__opts { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.check { display: flex; align-items: center; gap: 8px; border: 0; background: transparent; cursor: pointer; padding: 0; font: 500 14px/1 $sans; color: $ink;
+  &__box { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid $line; background: #fff; display: flex; align-items: center; justify-content: center; font: 700 12px/1 $sans; color: #fff;
+    &.on { background: $blue; border-color: $blue; } } }
+
+.error { font: 600 14px/1.3 $sans; color: $red; background: $red-bg; padding: 12px 14px; border-radius: 10px; }
+
+.btn { min-height: 54px; border: 0; border-radius: 12px; background: $blue; color: #fff; font: 700 16px/1 $sans; cursor: pointer; transition: background .15s;
+  &:hover { background: $blue-h; }
+  &:disabled { opacity: .7; cursor: default; } }
+
+.hint { margin: 0; font: 500 13px/1.5 $sans; color: $muted; text-align: center; text-wrap: pretty; }

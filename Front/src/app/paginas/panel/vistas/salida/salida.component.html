@@ -1,0 +1,67 @@
+@if (seleccionado(); as s) {
+  <div class="sp-grid">
+    <div class="sp-card lg">
+      <div class="sp-row wrap gap-14">
+        <span class="sp-plate lg">{{ s.vehiculo.placa | placa }}</span>
+        <div class="sp-stack-4"><b class="lg">{{ s.vehiculo.nombreVisitante }}</b><small class="muted">{{ s.vehiculo.casa }} · {{ s.vehiculo.telefono | telefono }} · {{ etiquetaTipo[s.vehiculo.tipo] }}</small></div>
+      </div>
+      <div>
+        <div class="sp-kv"><span>Entrada · {{ s.vehiculo.registradoPor | nombreCorto }}</span><span>{{ s.vehiculo.horaEntrada | hora }}</span></div>
+        <div class="sp-kv"><span>Salida</span><span>{{ s.horaSalida }}</span></div>
+        <div class="sp-kv"><span>Tiempo total</span><span>{{ s.duracion }}</span></div>
+        <div class="sp-kv"><span>Horas × tarifa</span><span>{{ s.formula }}</span></div>
+      </div>
+      <div class="sp-total-bar"><span>Total a cobrar</span><b>{{ s.cobro.total | moneda }}</b></div>
+    </div>
+
+    <div class="sp-card lg">
+      <div class="sp-field"><span>Portero que finaliza la salida <span class="hint">· cambiar pide contraseña</span></span>
+        <div class="sp-chips">
+          @for (portero of turno.porterosEnTurno(); track portero) {
+            <button type="button" class="sp-chip" [class.active]="turno.porteroActivo() === portero" (click)="turno.solicitarCambio(portero)">{{ portero }}</button>
+          }
+        </div>
+      </div>
+      <div class="sp-field"><span>Método de pago</span>
+        <div class="sp-seg">
+          @for (m of metodosPago; track m.codigo) { <button type="button" [class.active]="metodoPago() === m.codigo" (click)="metodoPago.set(m.codigo)">{{ m.etiqueta }}</button> }
+        </div>
+      </div>
+      @if (pagaEnEfectivo()) {
+        <div class="sp-stack-10">
+          <label class="sp-field">Valor con el que cancela
+            <div class="sp-money"><span>$</span><input inputmode="numeric" placeholder="0" [ngModel]="recibidoConFormato()" (ngModelChange)="alCambiarRecibido($event)" (keydown.enter)="confirmar()"></div>
+          </label>
+          <div class="sp-chips tight">
+            @for (r of valoresRapidos(); track r.valor) { <button type="button" class="sp-quick" (click)="recibido.set('' + r.valor)">{{ r.etiqueta }}</button> }
+          </div>
+          @if (recibido() !== '' && valorRecibido() >= total()) {
+            <div class="sp-change ok"><span>Vueltas a entregar</span><b>{{ valorRecibido() - total() | moneda }}</b></div>
+          }
+          @if (recibido() !== '' && valorRecibido() < total()) {
+            <div class="sp-change short"><span>Faltan</span><b>{{ total() - valorRecibido() | moneda }}</b></div>
+          }
+        </div>
+      }
+      @if (error()) { <div class="sp-msg err">{{ error() }}</div> }
+      <button type="button" class="sp-btn primary lg block" [disabled]="!puedeConfirmar()" (click)="confirmar()">{{ puedeConfirmar() ? textoConfirmar() : 'Ingresa el valor recibido' }}</button>
+      <button type="button" class="sp-btn ghost" (click)="volver()">← Elegir otro vehículo</button>
+    </div>
+  </div>
+} @else {
+  <div class="sp-card lg narrow">
+    <label class="sp-field">Buscar por placa o nombre
+      <input class="sp-input-search" [ngModel]="busqueda()" (ngModelChange)="busqueda.set($event)" placeholder="ABC123 o nombre">
+    </label>
+    <div class="sp-list">
+      @for (item of coincidencias(); track item.vehiculo.id) {
+        <button type="button" class="sp-list-row btn tall" (click)="elegir(item.vehiculo.id)">
+          <span class="sp-plate">{{ item.vehiculo.placa | placa }}</span>
+          <span class="grow sp-stack-3"><b>{{ item.vehiculo.nombreVisitante }}</b><small>{{ item.vehiculo.casa }} · {{ etiquetaTipo[item.vehiculo.tipo] }}</small></span>
+          <span class="mono muted sm">{{ item.cobro.cronometro }}</span>
+          <b class="mono amount">{{ item.cobro.total | moneda }}</b>
+        </button>
+      } @empty { <div class="sp-empty flat">No hay vehículos que coincidan.</div> }
+    </div>
+  </div>
+}

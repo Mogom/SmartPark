@@ -1,0 +1,66 @@
+<div class="sp-stats">
+  @for (t of tarjetas(); track t.etiqueta) {
+    <div class="sp-card stat"><span class="sp-kicker">{{ t.etiqueta }}</span><b>{{ t.valor | moneda }}</b><small>{{ t.detalle }}</small></div>
+  }
+</div>
+
+<div class="sp-grid">
+  <div class="sp-card lg gap-6">
+    <h2 class="sp-title pb">Cuadre de efectivo</h2>
+    <div class="sp-row-between py">
+      <span class="muted">Base inicial de caja</span>
+      <div class="sp-money sm"><span>$</span><input inputmode="numeric" [ngModel]="baseConFormato()" (ngModelChange)="alCambiarBase($event)"></div>
+    </div>
+    <div class="sp-kv"><span>Dinero recibido de visitantes</span><span>{{ caja.resumen().recibido | moneda }}</span></div>
+    <div class="sp-kv"><span>− Vueltas entregadas</span><span>{{ caja.resumen().vueltas | moneda }}</span></div>
+    <div class="sp-kv"><span>= Efectivo cobrado</span><span class="strong">{{ caja.resumen().efectivo | moneda }}</span></div>
+    <div class="sp-expected"><span>Debe haber en caja</span><b>{{ caja.resumen().esperado | moneda }}</b></div>
+    <div class="sp-row-between py">
+      <span class="strong">Efectivo contado</span>
+      <div class="sp-money sm strong"><span>$</span><input inputmode="numeric" placeholder="0" [ngModel]="contadoConFormato()" (ngModelChange)="alCambiarContado($event)"></div>
+    </div>
+    @if (diferencia(); as d) {
+      @if (d < 0) { <div class="sp-diff short"><span>Faltante</span><b>{{ valorAbsoluto(d) | moneda }}</b></div> }
+      @else { <div class="sp-diff over"><span>Sobrante</span><b>{{ d | moneda }}</b></div> }
+    } @else if (diferencia() === 0) {
+      <div class="sp-diff ok"><span>Caja cuadrada</span><b>$&nbsp;0</b></div>
+    }
+    @if (error()) { <div class="sp-msg err">{{ error() }}</div> }
+    <p class="sp-p xs">Turno abierto desde las <b class="mono">{{ turno.inicio() | hora }}</b>. Al cerrarlo, la caja vuelve a cero para el siguiente turno.</p>
+    <button type="button" class="sp-btn dark block tall" [disabled]="guardando()" (click)="cerrarTurno()">Cerrar turno y generar consolidado</button>
+  </div>
+
+  <div class="sp-card lg gap-4">
+    <h2 class="sp-title pb">Por portero · turno actual</h2>
+    @for (p of porPortero(); track p.nombre) {
+      <div class="sp-porter">
+        <div class="sp-row gap-10">
+          <span class="sp-avatar">{{ p.nombre | iniciales }}</span>
+          <div class="grow sp-stack-3"><b>{{ p.nombre }}{{ p.eliminado ? ' (eliminado)' : '' }}</b><small class="muted">{{ p.entradas }} entradas · {{ p.salidas }} salidas</small></div>
+          <b class="mono">{{ p.total | moneda }}</b>
+        </div>
+        <div class="sp-grid-3">
+          <div class="sp-tile col sm"><span>Efectivo</span><b>{{ p.efectivo | moneda }}</b></div>
+          <div class="sp-tile col sm"><span>Tarjeta</span><b>{{ p.tarjeta | moneda }}</b></div>
+          <div class="sp-tile col sm"><span>Transf.</span><b>{{ p.transferencia | moneda }}</b></div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+@if (caja.cierres().length) {
+  <div class="sp-card">
+    <h2 class="sp-title">Turnos cerrados hoy</h2>
+    @for (c of caja.cierres(); track c.id) {
+      <div class="sp-closure">
+        <span class="mono strong">{{ c.inicio | hora }} – {{ c.fin | hora }}</span>
+        <span class="grow muted">{{ porterosDe(c) }}</span>
+        <b class="mono">{{ c.total | moneda }}</b>
+        @if (c.diferencia === 0) { <span class="sp-tag green">Cuadrada</span> }
+        @else { <span class="sp-tag red">{{ c.diferencia < 0 ? 'Faltante' : 'Sobrante' }} {{ valorAbsoluto(c.diferencia) | moneda }}</span> }
+        <button type="button" class="sp-btn outline xs" (click)="verConsolidado(c)">Ver consolidado</button>
+      </div>
+    }
+  </div>
+}
