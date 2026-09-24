@@ -1,0 +1,260 @@
+<div class="sp">
+
+  <header class="nav">
+    <div class="nav__in">
+      <a href="#inicio" class="brand">
+        <span class="brand__logo">P</span>
+        <span class="brand__name">Smart<span>Park</span></span>
+      </a>
+      <nav class="nav__links">
+        <a href="#como-funciona" class="nav__link">Cómo funciona</a>
+        <a href="#funciones" class="nav__link">Funciones</a>
+        <a href="#contacto" class="nav__link">Contacto</a>
+        <a href="/login" class="btn btn--sm">Iniciar sesión</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- BANNER -->
+  <section id="inicio" class="hero">
+    <div class="hero__fade"></div>
+    <div class="hero__in">
+      <div class="hero__text">
+        <div class="badge" data-reveal="hero"><span>Nuevo</span>Parqueadero de visitantes para conjuntos</div>
+        <h1 data-reveal="hero">Cobra cada hora de visita <em>sin descuadres.</em></h1>
+        <p data-reveal="hero">SmartPark registra la hora de entrada de cada visitante, calcula el cobro según la tarifa del conjunto y le dice al portero exactamente cuántas vueltas entregar.</p>
+        <div class="hero__ctas" data-reveal="hero">
+          <a href="#contacto" class="btn btn--lg">Solicitar demostración</a>
+          <a href="#como-funciona" class="btn btn--lg btn--ghost">Ver cómo funciona</a>
+        </div>
+        <div class="checks" data-reveal="hero">
+          <span><i>✓</i>Sin instalación</span>
+          <span><i>✓</i>Computador, tablet o celular</span>
+          <span><i>✓</i>Caja cuadrada cada turno</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section id="como-funciona" class="how">
+    <div class="wrap how__in">
+      <div class="head head--center" data-reveal="scroll">
+        <div class="eyebrow eyebrow--lines"><span></span>Cómo funciona<span></span></div>
+        <h2>De la portería a la caja en tres pasos<b>.</b></h2>
+      </div>
+      <div class="how__grid">
+        <div class="steps">
+          <div class="step" data-reveal="scroll" data-delay="0">
+            <div class="step__rail"><div class="step__dot">1</div><div class="step__line"></div></div>
+            <div class="step__body"><h3>Registra la entrada</h3><p>El portero escribe placa, nombre, casa y teléfono del visitante. La hora de entrada queda guardada y se imprime el ticket.</p></div>
+          </div>
+          <div class="step" data-reveal="scroll" data-delay="110">
+            <div class="step__rail"><div class="step__dot">2</div><div class="step__line"></div></div>
+            <div class="step__body"><h3>El tiempo corre solo</h3><p>Cada vehículo dentro muestra cuánto lleva y cuánto debe según la tarifa por hora de carro o moto.</p></div>
+          </div>
+          <div class="step step--last" data-reveal="scroll" data-delay="220">
+            <div class="step__rail"><div class="step__dot">3</div></div>
+            <div class="step__body"><h3>Cobra y entrega vueltas</h3><p>Al salir, SmartPark calcula el total, pide con cuánto paga el visitante y muestra las vueltas exactas.</p></div>
+          </div>
+        </div>
+
+        <div #mockCol class="mock-col" [style.height]="mockBoxHeight" data-reveal="scroll" data-delay="330">
+          <div #mock class="mock" [style.transform]="mockTransform">
+            <aside class="mock__side">
+              <div class="mock__brand"><span>P</span>Smart<em>Park</em></div>
+              <div class="mock__nav is-on">Panel</div>
+              <div class="mock__nav">Registrar entrada</div>
+              <div class="mock__nav">Vehículos dentro <small>5</small></div>
+              <div class="mock__nav">Salida y cobro</div>
+              <div class="mock__nav">Caja y cuadre</div>
+              <div class="mock__nav">Historial</div>
+              <div class="mock__nav">Tarifas y cupos</div>
+              <div class="mock__shift"><small>Turno portería</small><span>Carlos Mejía</span><span>Diana Rojas</span></div>
+            </aside>
+            <div class="mock__main">
+              <div class="mock__top">
+                <div><small>Conjunto Altos del Parque</small><strong>Resumen del día</strong></div>
+                <div class="mock__top-r"><span class="mono chip">{{ clock }}</span><span class="chip chip--blue">+ Entrada</span></div>
+              </div>
+              <div class="mock__stats">
+                <div class="stat stat--blue"><small>Recaudado hoy</small><b>$&nbsp;112.000</b></div>
+                <div class="stat"><small>Vehículos dentro</small><b>5<small> / 60</small></b></div>
+                <div class="stat"><small>Visitantes hoy</small><b>12</b></div>
+                <div class="stat"><small>Estancia prom.</small><b>1 h 52</b></div>
+              </div>
+              <div class="mock__row">
+                <div class="panel">
+                  <strong>Entradas por hora</strong>
+                  <div class="bars">
+                    @for (b of bars; track $index) { <div [class.on]="b.on" [style.height.%]="b.h"></div> }
+                  </div>
+                  <div class="bars__x mono"><span>08</span><span>10</span><span>12</span><span>14</span><span>16</span></div>
+                </div>
+                <div class="panel">
+                  <strong>Vehículos dentro</strong>
+                  @for (r of rows; track r.plate) {
+                    <div class="veh"><span class="plate mono">{{ r.plate }}</span><span class="veh__h">{{ r.house }}</span><span class="mono">{{ r.timer }}</span><span class="mono veh__c">{{ r.cost }}</span></div>
+                  }
+                </div>
+              </div>
+              <div class="panel">
+                <div class="occ__head"><strong>Ocupación</strong><span class="mono">Carros 3/40 · Motos 2/20</span></div>
+                <div class="occ"><div><i style="width:18%"></i></div><div><i style="width:10%"></i></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FUNCIONES -->
+  <section id="funciones" class="feat">
+    <div class="wrap feat__in">
+      <div class="feat__head" data-reveal="scroll">
+        <div class="head">
+          <div class="eyebrow">Funciones</div>
+          <h2 class="h2--sm">Control para la administración, simple para el portero<b>.</b></h2>
+        </div>
+        <a href="#contacto" class="btn btn--dark">Solicitar demostración</a>
+      </div>
+
+      <div class="feat__grid">
+        <div class="card card--dark card--big" data-reveal="scroll" data-delay="0">
+          <div class="glow glow--tr"></div>
+          <div class="card__t"><h3>Cuadre de caja</h3><p>Base, dinero recibido, vueltas y efectivo contado. Detecta faltantes o sobrantes antes de entregar el turno.</p></div>
+          <div class="ledger">
+            <div><span>Base inicial</span><b class="mono">$&nbsp;100.000</b></div>
+            <div><span>Recibido de visitantes</span><b class="mono">$&nbsp;112.000</b></div>
+            <div><span>− Vueltas entregadas</span><b class="mono">$&nbsp;31.500</b></div>
+            <div class="strong"><span>Debe haber en caja</span><b class="mono">$&nbsp;180.500</b></div>
+            <div class="ok"><span>Caja cuadrada</span><b class="mono">$&nbsp;0</b></div>
+          </div>
+        </div>
+
+        <div class="card" data-reveal="scroll" data-delay="110">
+          <div class="card__t"><h3>Porteros de turno</h3><p>Elige uno o dos porteros por turno. Cada entrada y salida queda a nombre de quien la registró.</p></div>
+          <div class="people">
+            <div class="person on"><i>CM</i><span>Carlos Mejía</span><small>En turno</small></div>
+            <div class="person on"><i>DR</i><span>Diana Rojas</span><small>En turno</small></div>
+            <div class="person"><i>LH</i><span>Luis Herrera</span><small>Libre</small></div>
+          </div>
+        </div>
+
+        <div class="card card--blue" data-reveal="scroll" data-delay="220">
+          <div class="glow glow--bl"></div>
+          <div class="card__t"><h3>Historial por mes</h3><p>Consulta cuánto recaudó el parqueadero de visitantes cada mes y compara con meses anteriores.</p></div>
+          <div class="mbars">
+            @for (m of months; track m[0]; let last = $last) {
+              <div><i [class.on]="last" [style.height.%]="m[1]"></i><span class="mono">{{ m[0] }}</span></div>
+            }
+          </div>
+        </div>
+
+        <div class="card" data-reveal="scroll" data-delay="330">
+          <div class="card__t"><h3>Consolidado imprimible</h3><p>Totales por efectivo, tarjeta y transferencia, por portero, listos para firmar al cierre.</p></div>
+          <div class="ticket-wrap">
+            <div class="ticket mono">
+              <div class="ticket__t">CONSOLIDADO DE TURNO</div>
+              <div><span>Efectivo</span><b>$&nbsp;80.500</b></div>
+              <div><span>Tarjeta</span><b>$&nbsp;14.000</b></div>
+              <div><span>Transferencia</span><b>$&nbsp;17.500</b></div>
+              <hr>
+              <div class="ticket__total"><span>TOTAL</span><b>$&nbsp;112.000</b></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" data-reveal="scroll" data-delay="440">
+          <div class="card__t"><h3>Tarifas y cupos</h3><p>Define el valor por hora de carro y moto y los cupos disponibles de tu conjunto.</p></div>
+          <div class="rates">
+            <div class="rate"><small>Carro</small><b>$&nbsp;3.500<small>/h</small></b><div class="meter"><i style="width:45%"></i></div><span class="mono">18/40 cupos</span></div>
+            <div class="rate"><small>Moto</small><b>$&nbsp;1.500<small>/h</small></b><div class="meter"><i style="width:30%"></i></div><span class="mono">6/20 cupos</span></div>
+          </div>
+        </div>
+
+        <div class="card card--dark card--wide" data-reveal="scroll" data-delay="550">
+          <div class="card__t"><h3>Computador, tablet o celular</h3><p>Funciona en el equipo que ya tiene la portería, sin instalar nada.</p></div>
+          <div class="devices">
+            <div class="dev dev--laptop"><div class="dev__side"></div><div class="dev__grid"><i class="b"></i><i></i><i class="full"></i></div></div>
+            <div class="dev dev--tablet"><i class="b"></i><i class="fill"></i></div>
+            <div class="dev dev--phone"><i class="b"></i><i class="fill"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section id="contacto" class="contact">
+    <div class="wrap contact__in">
+      <div class="contact__l" data-reveal="scroll">
+        <div class="head">
+          <div class="eyebrow eyebrow--light">Solicitar demostración</div>
+          <h2>Lleva el parqueadero de visitantes de tu conjunto a SmartPark.</h2>
+          <p>Déjanos tus datos y te mostramos el sistema con las tarifas de tu conjunto.</p>
+        </div>
+        <ol class="next">
+          <li><span>1</span>Te contactamos para agendar una llamada.</li>
+          <li><span>2</span>Configuramos tarifas y cupos de tu conjunto.</li>
+          <li><span>3</span>Tus porteros empiezan a registrar visitantes.</li>
+        </ol>
+      </div>
+
+      <div class="form-card" data-reveal="scroll" data-delay="120">
+        @if (!sent) {
+          <form class="form" (ngSubmit)="submit()" novalidate>
+            <label>Nombre completo
+              <input name="name" [(ngModel)]="form.name" (ngModelChange)="error = ''" placeholder="Nombre y apellido">
+            </label>
+            <div class="form__2">
+              <label>Correo
+                <input name="email" type="email" [(ngModel)]="form.email" (ngModelChange)="error = ''" placeholder="tu@correo.com">
+              </label>
+              <label>Teléfono
+                <input name="phone" class="mono" inputmode="numeric" [ngModel]="phoneDisplay" (ngModelChange)="onPhone($event)" placeholder="300 123 4567">
+              </label>
+            </div>
+            <div class="form__2">
+              <label>Conjunto
+                <input name="org" [(ngModel)]="form.org" (ngModelChange)="error = ''" placeholder="Nombre del conjunto">
+              </label>
+              <label>Ciudad
+                <input name="city" [(ngModel)]="form.city" (ngModelChange)="error = ''" placeholder="Ciudad">
+              </label>
+            </div>
+            <div class="field">
+              <span>Cupos de visitantes</span>
+              <div class="seg">
+                @for (s of sizes; track s) {
+                  <button type="button" [class.on]="form.size === s" (click)="form.size = s">{{ s }}</button>
+                }
+              </div>
+            </div>
+            <label>Mensaje (opcional)
+              <textarea name="msg" rows="3" [(ngModel)]="form.msg" placeholder="Cuéntanos cómo manejan hoy el parqueadero de visitantes"></textarea>
+            </label>
+            @if (error) { <div class="form__err">{{ error }}</div> }
+            <button type="submit" class="btn btn--lg btn--block">Enviar solicitud</button>
+          </form>
+        } @else {
+          <div class="done">
+            <div class="done__ic">✓</div>
+            <h3>Solicitud enviada</h3>
+            <p>Gracias, {{ firstName }}. Te escribiremos a {{ form.email }} para agendar la demostración.</p>
+            <button type="button" class="btn btn--dark" (click)="resetForm()">Enviar otra solicitud</button>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap foot__in">
+      <span class="foot__brand">Smart<span>Park</span></span>
+      <a href="mailto:contacto@smartpark.co">contacto&#64;smartpark.co</a>
+      <span>© {{ year }} SmartPark</span>
+    </div>
+  </footer>
+</div>
