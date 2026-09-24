@@ -2,6 +2,7 @@ import {
   AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild, inject
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 interface DemoForm { name: string; email: string; phone: string; org: string; city: string; size: string; msg: string; }
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -11,7 +12,7 @@ const emptyForm = (): DemoForm => ({ name: '', email: '', phone: '', org: '', ci
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss'],
 })
