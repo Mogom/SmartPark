@@ -1,0 +1,71 @@
+<div class="sp-app sp-shell">
+  <aside class="sp-side" aria-label="Menú del panel">
+    <a class="sp-brand" routerLink="/panel">
+      <span class="sp-logo">P</span>
+      <span class="sp-stack-4"><b>Smart<span>Park</span></b><small>{{ turno.sede() }}</small></span>
+    </a>
+    <div class="sp-side-kicker">Operación</div>
+    <nav class="sp-nav">
+      @for (opcion of menu; track opcion.ruta) {
+        <a [routerLink]="opcion.ruta" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: opcion.exacta }">
+          <i></i><span>{{ opcion.etiqueta }}</span>
+          @if (opcion.ruta === '/panel/dentro') { <em>{{ visitas.dentro().length }}</em> }
+        </a>
+      }
+    </nav>
+    <div class="sp-side-foot">
+      <div class="sp-row-between">
+        <span class="sp-side-kicker flat">En turno</span>
+        <span class="sp-live"><i></i>Activo</span>
+      </div>
+      @for (portero of turno.porterosEnTurno(); track portero) {
+        <div class="sp-side-person"><span>{{ portero | iniciales }}</span>{{ portero }}</div>
+      }
+      <div class="sp-side-actions">
+        <button type="button" (click)="turno.abrirModal()">Cambiar turno</button>
+        <button type="button" (click)="confirmandoSalida.set(true)">Salir</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="sp-main">
+    <header class="sp-top">
+      <div class="sp-top-title"><h1>{{ titulo() }}</h1><span>{{ fechaSede() }}</span></div>
+      <div class="sp-top-actions">
+        <span class="sp-clock">{{ horaActual() }}</span>
+        <button type="button" class="sp-shift-btn" (click)="turno.abrirModal()"><i></i>{{ porterosTurno() }}</button>
+        <a class="sp-btn primary sm" routerLink="/panel/entrada">+ Registrar entrada</a>
+      </div>
+    </header>
+    <div class="sp-content">
+      @if (notificaciones.error(); as mensaje) {
+        <div class="sp-msg err sp-row-between" role="alert">
+          <span>{{ mensaje }}</span>
+          <button type="button" class="sp-btn link" (click)="notificaciones.limpiar()">Cerrar</button>
+        </div>
+      }
+      <router-outlet />
+    </div>
+  </main>
+
+  <nav class="sp-mobile-nav">
+    @for (opcion of menu; track opcion.ruta) {
+      <a [routerLink]="opcion.ruta" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: opcion.exacta }">{{ opcion.etiquetaCorta }}</a>
+    }
+  </nav>
+
+  <sp-modal-turno />
+  <sp-modal-ticket />
+
+  @if (confirmandoSalida()) {
+    <div class="sp-backdrop" (click)="confirmandoSalida.set(false)">
+      <div class="sp-modal sm" (click)="$event.stopPropagation()">
+        <h2>¿Cerrar sesión?</h2>
+        <p>El turno sigue abierto con {{ caja.resumen().salidas }} salidas cobradas ({{ caja.resumen().esperado | moneda }} en caja). Si terminas tu jornada, cierra el turno primero.</p>
+        <button type="button" class="sp-btn primary block" (click)="irACerrarTurno()">Ir a cerrar turno</button>
+        <button type="button" class="sp-btn outline block" (click)="cerrarSesion()">Salir sin cerrar turno</button>
+        <button type="button" class="sp-btn ghost" (click)="confirmandoSalida.set(false)">Cancelar</button>
+      </div>
+    </div>
+  }
+</div>

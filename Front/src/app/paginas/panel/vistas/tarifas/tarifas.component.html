@@ -1,0 +1,24 @@
+<sp-bloqueo-administracion texto="Cambiar tarifas, topes y cupos requiere la contraseña de administración.">
+  <p class="sp-p lead">{{ tarifas.textoRegla() }} Los cambios aplican a vehículos que entren desde ahora; los que ya están dentro conservan la tarifa con la que entraron.</p>
+  <div class="sp-grid rates">
+    @for (t of tiposVehiculo; track t.codigo) {
+      <div class="sp-card lg">
+        <h2 class="sp-title lg">{{ t.etiqueta }}</h2>
+        <div class="sp-grid-2">
+          <label class="sp-field sm">Valor hora (COP)
+            <input class="sp-input num" type="number" step="100" [value]="tarifas.tarifas()[t.codigo].valorHora" (change)="actualizar(t.codigo, 'valorHora', $event)">
+          </label>
+          <label class="sp-field sm">Cupos
+            <input class="sp-input num" type="number" [value]="tarifas.tarifas()[t.codigo].cupos" (change)="actualizar(t.codigo, 'cupos', $event)">
+          </label>
+          <label class="sp-field sm full">Tope por cada 24 horas (COP)
+            <input class="sp-input num" type="number" step="500" [value]="tarifas.tarifas()[t.codigo].topeDiario" (change)="actualizar(t.codigo, 'topeDiario', $event)">
+          </label>
+        </div>
+        <div class="sp-grid-2 tight">
+          @for (h of horasEjemplo; track h) { <div class="sp-tile"><span>{{ h }} {{ h === 1 ? 'hora' : 'horas' }}</span><b>{{ h * tarifas.tarifas()[t.codigo].valorHora | moneda }}</b></div> }
+        </div>
+      </div>
+    }
+  </div>
+</sp-bloqueo-administracion>

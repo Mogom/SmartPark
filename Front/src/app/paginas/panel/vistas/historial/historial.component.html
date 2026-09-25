@@ -1,0 +1,54 @@
+<div class="sp-seg inline">
+  <button type="button" [class.active]="pestana() === 'HOY'" (click)="pestana.set('HOY')">Hoy</button>
+  <button type="button" [class.active]="pestana() === 'MESES'" (click)="pestana.set('MESES')">Por mes</button>
+</div>
+
+@if (pestana() === 'HOY') {
+  <div class="sp-row wrap gap-10">
+    <input class="sp-input search" [ngModel]="busqueda()" (ngModelChange)="busqueda.set($event)" placeholder="Buscar placa, nombre o casa">
+    <span class="push-left muted">{{ salidasHoy().length }} salidas · <b class="mono ink">{{ totalHoy() | moneda }}</b></span>
+  </div>
+  <div class="sp-table">
+    <div class="sp-table-head"><span>Placa</span><span>Visitante</span><span>Entrada</span><span>Salida</span><span>Tiempo</span><span>Pago</span><span class="right">Total</span></div>
+    @for (s of salidasHoy(); track s.id) {
+      <div class="sp-table-row">
+        <span><span class="sp-plate">{{ s.placa | placa }}</span></span>
+        <span class="sp-stack-3"><b>{{ s.nombreVisitante }}</b><small>{{ s.casa }} · {{ etiquetaTipo[s.tipo] }}</small></span>
+        <span class="sp-stack-3"><span class="mono">{{ s.horaEntrada | hora }}</span><small>{{ s.registradoPor | nombreCorto }}</small></span>
+        <span class="sp-stack-3"><span class="mono">{{ s.horaSalida | hora }}</span><small>{{ s.finalizadoPor | nombreCorto }}</small></span>
+        <span class="mono sm">{{ s.horaSalida - s.horaEntrada | duracion }}</span>
+        <span class="sp-stack-3"><span>{{ etiquetaPago[s.metodoPago] }}</span>@if (s.metodoPago === 'EFECTIVO') {<small>Recibió {{ s.valorRecibido | moneda }} · vueltas {{ s.vueltas | moneda }}</small>}</span>
+        <b class="mono right">{{ s.total | moneda }}</b>
+      </div>
+    } @empty { <div class="sp-empty flat">Sin salidas registradas hoy.</div> }
+  </div>
+} @else {
+  <div class="sp-stats three">
+    <div class="sp-card stat blue"><span class="sp-kicker">Acumulado {{ anio }}</span><b>{{ totalAnio() | moneda }}</b></div>
+    <div class="sp-card stat"><span class="sp-kicker">Promedio mensual</span><b>{{ promedioMensual() | moneda }}</b></div>
+    <div class="sp-card stat"><span class="sp-kicker">Mejor mes</span><b>{{ mejorMes() }}</b></div>
+  </div>
+  <div class="sp-card lg">
+    <h2 class="sp-title">Recaudo de visitantes por mes</h2>
+    <div class="sp-chart months">
+      @for (m of meses(); track m.mes) {
+        <div class="col">
+          <span class="n">{{ enMillones(m.total) }}</span>
+          <span class="bar" [class.peak]="m.enCurso" [style.height.%]="m.total / maximo() * 80"></span>
+          <span class="x">{{ m.etiqueta }}</span>
+        </div>
+      }
+    </div>
+  </div>
+  <div class="sp-table months">
+    <div class="sp-table-head"><span>Mes</span><span class="right">Visitas</span><span class="right">Prom. visita</span><span class="right">Recaudo</span></div>
+    @for (m of mesesDescendente(); track m.mes) {
+      <div class="sp-table-row">
+        <span class="sp-row gap-8"><b>{{ m.nombreCompleto }}</b>@if (m.enCurso) {<span class="sp-tag blue">En curso</span>}</span>
+        <span class="mono right">{{ m.visitas }}</span>
+        <span class="mono right">{{ (m.visitas ? m.total / m.visitas : 0) | moneda }}</span>
+        <b class="mono right">{{ m.total | moneda }}</b>
+      </div>
+    }
+  </div>
+}

@@ -1,0 +1,23 @@
+@if (vista(); as ticket) {
+  <div class="sp-backdrop" (click)="cerrar()">
+    <div class="sp-ticket" (click)="$event.stopPropagation()">
+      <div class="sp-ticket-head">
+        <div class="brand">Smart<span>Park</span></div>
+        <div class="kind">{{ ticket.titulo }}</div>
+        <div class="sede">{{ turno.sede() }}</div>
+      </div>
+      <hr>
+      @if (ticket.placa) { <div class="center"><span class="sp-plate lg">{{ ticket.placa }}</span></div> }
+      <div class="sp-ticket-rows">
+        @for (fila of ticket.filas; track fila.etiqueta) { <div><span>{{ fila.etiqueta }}</span><b>{{ fila.valor }}</b></div> }
+      </div>
+      <hr>
+      <div class="sp-ticket-total"><span>{{ ticket.etiquetaDestacada }}</span><b>{{ ticket.valorDestacado }}</b></div>
+      <div class="sp-ticket-foot">{{ ticket.pie }}</div>
+      <div class="sp-grid-2">
+        <button type="button" class="sp-btn outline" (click)="cerrar()">Cerrar</button>
+        <button type="button" class="sp-btn primary" (click)="imprimir()">Imprimir</button>
+      </div>
+    </div>
+  </div>
+}

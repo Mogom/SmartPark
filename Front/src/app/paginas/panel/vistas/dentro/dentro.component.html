@@ -1,0 +1,21 @@
+<div class="sp-chips">
+  @for (f of filtros(); track f.codigo) {
+    <button type="button" class="sp-chip dark" [class.active]="filtro() === f.codigo" (click)="filtro.set(f.codigo)">{{ f.etiqueta }} · {{ f.cantidad }}</button>
+  }
+</div>
+<div class="sp-cards">
+  @for (item of vehiculos(); track item.vehiculo.id) {
+    <div class="sp-card">
+      <div class="sp-row-between"><span class="sp-plate md">{{ item.vehiculo.placa | placa }}</span><span class="sp-tag gray">{{ etiquetaTipo[item.vehiculo.tipo] }}</span></div>
+      <div class="sp-stack-4"><b class="lg">{{ item.vehiculo.nombreVisitante }}</b><small class="muted">{{ item.vehiculo.casa }} · {{ item.vehiculo.telefono | telefono }}</small></div>
+      <div class="sp-timer">{{ item.cobro.cronometro }}</div>
+      <div class="sp-row-between dashed-top">
+        <div class="sp-stack-4"><small class="muted">Entró {{ item.vehiculo.horaEntrada | hora }}</small><small class="strong">por {{ item.vehiculo.registradoPor | nombreCorto }}</small></div>
+        <div class="sp-stack-4 end"><small class="muted">{{ item.cobro.enGracia ? 'En gracia' : item.cobro.horas + ' h cobradas' }}</small><b class="mono accent">{{ item.cobro.total | moneda }}</b></div>
+      </div>
+      <button type="button" class="sp-btn dark sm block" (click)="cobrar(item.vehiculo)">Registrar salida</button>
+    </div>
+  } @empty {
+    <div class="sp-empty">No hay vehículos de este tipo dentro.</div>
+  }
+</div>

@@ -59,8 +59,8 @@
           </div>
         </div>
 
-        <div #mockCol class="mock-col" [style.height]="mockBoxHeight" data-reveal="scroll" data-delay="330">
-          <div #mock class="mock" [style.transform]="mockTransform">
+        <div #columnaMaqueta class="mock-col" [style.height]="altoMaqueta" data-reveal="scroll" data-delay="330">
+          <div #maqueta class="mock" [style.transform]="transformacionMaqueta">
             <aside class="mock__side">
               <div class="mock__brand"><span>P</span>Smart<em>Park</em></div>
               <div class="mock__nav is-on">Panel</div>
@@ -75,7 +75,7 @@
             <div class="mock__main">
               <div class="mock__top">
                 <div><small>Conjunto Altos del Parque</small><strong>Resumen del día</strong></div>
-                <div class="mock__top-r"><span class="mono chip">{{ clock }}</span><span class="chip chip--blue">+ Entrada</span></div>
+                <div class="mock__top-r"><span class="mono chip">{{ hora }}</span><span class="chip chip--blue">+ Entrada</span></div>
               </div>
               <div class="mock__stats">
                 <div class="stat stat--blue"><small>Recaudado hoy</small><b>$&nbsp;112.000</b></div>
@@ -87,14 +87,14 @@
                 <div class="panel">
                   <strong>Entradas por hora</strong>
                   <div class="bars">
-                    @for (b of bars; track $index) { <div [class.on]="b.on" [style.height.%]="b.h"></div> }
+                    @for (barra of barrasMaqueta; track $index) { <div [class.on]="barra.destacada" [style.height.%]="barra.alto"></div> }
                   </div>
                   <div class="bars__x mono"><span>08</span><span>10</span><span>12</span><span>14</span><span>16</span></div>
                 </div>
                 <div class="panel">
                   <strong>Vehículos dentro</strong>
-                  @for (r of rows; track r.plate) {
-                    <div class="veh"><span class="plate mono">{{ r.plate }}</span><span class="veh__h">{{ r.house }}</span><span class="mono">{{ r.timer }}</span><span class="mono veh__c">{{ r.cost }}</span></div>
+                  @for (fila of filasMaqueta; track fila.placa) {
+                    <div class="veh"><span class="plate mono">{{ fila.placa }}</span><span class="veh__h">{{ fila.casa }}</span><span class="mono">{{ fila.cronometro }}</span><span class="mono veh__c">{{ fila.cobro }}</span></div>
                   }
                 </div>
               </div>
@@ -146,8 +146,8 @@
           <div class="glow glow--bl"></div>
           <div class="card__t"><h3>Historial por mes</h3><p>Consulta cuánto recaudó el parqueadero de visitantes cada mes y compara con meses anteriores.</p></div>
           <div class="mbars">
-            @for (m of months; track m[0]; let last = $last) {
-              <div><i [class.on]="last" [style.height.%]="m[1]"></i><span class="mono">{{ m[0] }}</span></div>
+            @for (mes of mesesMaqueta; track mes.etiqueta; let ultimo = $last) {
+              <div><i [class.on]="ultimo" [style.height.%]="mes.porcentaje"></i><span class="mono">{{ mes.etiqueta }}</span></div>
             }
           </div>
         </div>
@@ -203,47 +203,47 @@
       </div>
 
       <div class="form-card" data-reveal="scroll" data-delay="120">
-        @if (!sent) {
-          <form class="form" (ngSubmit)="submit()" novalidate>
+        @if (!enviado()) {
+          <form class="form" (ngSubmit)="enviar()" novalidate>
             <label>Nombre completo
-              <input name="name" [(ngModel)]="form.name" (ngModelChange)="error = ''" placeholder="Nombre y apellido">
+              <input name="nombre" [(ngModel)]="formulario.nombre" (ngModelChange)="error.set('')" placeholder="Nombre y apellido">
             </label>
             <div class="form__2">
               <label>Correo
-                <input name="email" type="email" [(ngModel)]="form.email" (ngModelChange)="error = ''" placeholder="tu@correo.com">
+                <input name="correo" type="email" [(ngModel)]="formulario.correo" (ngModelChange)="error.set('')" placeholder="tu@correo.com">
               </label>
               <label>Teléfono
-                <input name="phone" class="mono" inputmode="numeric" [ngModel]="phoneDisplay" (ngModelChange)="onPhone($event)" placeholder="300 123 4567">
+                <input name="telefono" class="mono" inputmode="numeric" [ngModel]="telefonoConFormato" (ngModelChange)="alCambiarTelefono($event)" placeholder="300 123 4567">
               </label>
             </div>
             <div class="form__2">
               <label>Conjunto
-                <input name="org" [(ngModel)]="form.org" (ngModelChange)="error = ''" placeholder="Nombre del conjunto">
+                <input name="conjunto" [(ngModel)]="formulario.conjunto" (ngModelChange)="error.set('')" placeholder="Nombre del conjunto">
               </label>
               <label>Ciudad
-                <input name="city" [(ngModel)]="form.city" (ngModelChange)="error = ''" placeholder="Ciudad">
+                <input name="ciudad" [(ngModel)]="formulario.ciudad" (ngModelChange)="error.set('')" placeholder="Ciudad">
               </label>
             </div>
             <div class="field">
               <span>Cupos de visitantes</span>
               <div class="seg">
-                @for (s of sizes; track s) {
-                  <button type="button" [class.on]="form.size === s" (click)="form.size = s">{{ s }}</button>
+                @for (tamano of tamanos; track tamano) {
+                  <button type="button" [class.on]="formulario.tamano === tamano" (click)="formulario.tamano = tamano">{{ tamano }}</button>
                 }
               </div>
             </div>
             <label>Mensaje (opcional)
-              <textarea name="msg" rows="3" [(ngModel)]="form.msg" placeholder="Cuéntanos cómo manejan hoy el parqueadero de visitantes"></textarea>
+              <textarea name="mensaje" rows="3" [(ngModel)]="formulario.mensaje" placeholder="Cuéntanos cómo manejan hoy el parqueadero de visitantes"></textarea>
             </label>
-            @if (error) { <div class="form__err">{{ error }}</div> }
-            <button type="submit" class="btn btn--lg btn--block">Enviar solicitud</button>
+            @if (error()) { <div class="form__err">{{ error() }}</div> }
+            <button type="submit" class="btn btn--lg btn--block" [disabled]="enviando()">{{ enviando() ? 'Enviando…' : 'Enviar solicitud' }}</button>
           </form>
         } @else {
           <div class="done">
             <div class="done__ic">✓</div>
             <h3>Solicitud enviada</h3>
-            <p>Gracias, {{ firstName }}. Te escribiremos a {{ form.email }} para agendar la demostración.</p>
-            <button type="button" class="btn btn--dark" (click)="resetForm()">Enviar otra solicitud</button>
+            <p>Gracias, {{ primerNombre }}. Te escribiremos a {{ formulario.correo }} para agendar la demostración.</p>
+            <button type="button" class="btn btn--dark" (click)="reiniciarFormulario()">Enviar otra solicitud</button>
           </div>
         }
       </div>
@@ -254,7 +254,7 @@
     <div class="wrap foot__in">
       <span class="foot__brand">Smart<span>Park</span></span>
       <a href="mailto:contacto@smartpark.co">contacto&#64;smartpark.co</a>
-      <span>© {{ year }} SmartPark</span>
+      <span>© {{ anio }} SmartPark</span>
     </div>
   </footer>
 </div>

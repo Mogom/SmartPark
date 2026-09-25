@@ -1,0 +1,52 @@
+<sp-bloqueo-administracion texto="Registrar o eliminar usuarios requiere la contraseña de administración.">
+  <div class="sp-grid">
+    <div class="sp-card lg">
+      <div class="sp-stack-4">
+        <h2 class="sp-title">Registrar usuario</h2>
+        <p class="sp-p sm">La contraseña es personal. La pedirá el sistema cada vez que entre al turno.</p>
+      </div>
+      <label class="sp-field">Nombre completo
+        <input class="sp-input" [(ngModel)]="formulario.nombre" (ngModelChange)="limpiarMensajes()" placeholder="Nombre y apellido">
+      </label>
+      <label class="sp-field">Correo o teléfono
+        <input class="sp-input" [(ngModel)]="formulario.contacto" (ngModelChange)="limpiarMensajes()" placeholder="correo@ejemplo.com o 300 123 4567">
+        <span class="help">Aquí llega el código si olvida la contraseña.</span>
+      </label>
+      <div class="sp-grid-auto-140">
+        <label class="sp-field">Contraseña <input class="sp-input" type="password" [(ngModel)]="formulario.contrasena" (ngModelChange)="limpiarMensajes()" placeholder="Mínimo 4" autocomplete="new-password"></label>
+        <label class="sp-field">Confirmar <input class="sp-input" type="password" [(ngModel)]="formulario.confirmacion" (ngModelChange)="limpiarMensajes()" placeholder="Repetir" autocomplete="new-password"></label>
+      </div>
+      <div class="sp-field"><span>Rol</span>
+        <div class="sp-seg">
+          <button type="button" [class.active]="formulario.rol === 'PORTERO'" (click)="formulario.rol = 'PORTERO'">Portero</button>
+          <button type="button" [class.active]="formulario.rol === 'ADMINISTRADOR'" (click)="formulario.rol = 'ADMINISTRADOR'">Administración</button>
+        </div>
+      </div>
+      @if (error()) { <div class="sp-msg err">{{ error() }}</div> }
+      @if (exito()) { <div class="sp-msg ok">{{ exito() }}</div> }
+      <button type="button" class="sp-btn primary block" [disabled]="guardando()" (click)="guardar()">Guardar usuario</button>
+    </div>
+
+    <div class="sp-card lg gap-0">
+      <div class="sp-row-between pb"><h2 class="sp-title">Usuarios registrados</h2><span class="meta">{{ usuarios.usuarios().length }}</span></div>
+      @for (u of usuarios.usuarios(); track u.id) {
+        <div class="sp-user">
+          <div class="sp-row gap-12">
+            <span class="sp-avatar lg">{{ u.nombre | iniciales }}</span>
+            <div class="grow sp-stack-4"><b>{{ u.nombre }}</b><small class="muted ellipsis">{{ tipoContacto(u.contacto) }} · {{ u.contacto | ocultarContacto }}</small></div>
+            @if (u.rol === 'ADMINISTRADOR') { <span class="sp-tag dark">Administración</span> }
+            @if (turno.porterosEnTurno().includes(u.nombre)) { <span class="sp-tag green">En turno</span> }
+            @if (confirmandoEliminar() !== u.nombre) { <button type="button" class="sp-btn danger-outline" (click)="confirmandoEliminar.set(u.nombre); limpiarMensajes()">Eliminar</button> }
+          </div>
+          @if (confirmandoEliminar() === u.nombre) {
+            <div class="sp-confirm">
+              <span>¿Eliminar a {{ u.nombre }}? Ya no podrá entrar al turno.</span>
+              <button type="button" class="sp-btn outline xs" (click)="confirmandoEliminar.set(null)">Cancelar</button>
+              <button type="button" class="sp-btn danger xs" (click)="eliminar(u.nombre)">Eliminar</button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</sp-bloqueo-administracion>

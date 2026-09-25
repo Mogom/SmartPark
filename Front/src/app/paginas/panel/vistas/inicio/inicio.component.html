@@ -1,0 +1,73 @@
+<div class="sp-kpis">
+  <div><span class="sp-kicker">Recaudado hoy</span><b class="accent">{{ recaudoHoy() | moneda }}</b></div>
+  <div><span class="sp-kicker">Vehículos dentro</span><b>{{ visitas.dentro().length }} <small>de {{ tarifas.cuposTotales() }}</small></b></div>
+  <div><span class="sp-kicker">Visitantes hoy</span><b>{{ visitantesHoy() }}</b></div>
+  <div><span class="sp-kicker">Estancia promedio</span><b>{{ estanciaPromedio() }}</b></div>
+</div>
+
+<div class="sp-home-grid">
+  <section class="sp-card span-2">
+    <div class="sp-card-head"><h2>Entradas por hora</h2><span class="meta-text">Hora pico <b class="mono">{{ grafica().horaPico }}</b></span></div>
+    <div class="sp-chart">
+      @for (barra of grafica().barras; track barra.etiqueta) {
+        <div class="col">
+          <span class="n" [class.peak]="barra.esPico">{{ barra.cantidad }}</span>
+          <span class="bar" [class.peak]="barra.esPico" [style.height.%]="barra.porcentaje"></span>
+          <span class="x">{{ barra.etiqueta }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="sp-card">
+    <div class="sp-card-head"><h2>Ocupación</h2><span class="meta">{{ porcentajeOcupacion() }}% ocupado</span></div>
+    <div class="sp-big"><b>{{ cuposLibres() }}</b><span>cupos libres</span></div>
+    <div class="sp-stack-14 push">
+      @for (o of visitas.ocupacion(); track o.tipo) {
+        <div class="sp-stack-7">
+          <div class="sp-row-between strong"><span>{{ o.etiqueta }}</span>
+            <span class="meta">{{ o.ocupados }}/{{ o.cupos }} · {{ o.sobrecupo ? '+' + o.sobrecupo + ' en sobrecupo' : o.libres + ' libres' }}</span></div>
+          <div class="sp-meter"><i [class.over]="o.sobrecupo > 0" [style.width.%]="o.sobrecupo ? 100 : o.porcentaje"></i></div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="sp-card">
+    <div class="sp-card-head"><h2>Dentro ahora</h2><span class="meta">{{ visitas.dentro().length }}</span></div>
+    <div class="sp-list">
+      @for (item of primerosDentro(); track item.vehiculo.id) {
+        <button type="button" class="sp-list-row btn" (click)="cobrar(item.vehiculo)">
+          <span class="sp-plate">{{ item.vehiculo.placa | placa }}</span>
+          <span class="grow sp-stack-3"><b class="ellipsis">{{ item.vehiculo.nombreVisitante }}</b><small>{{ item.vehiculo.casa }}</small></span>
+          <span class="sp-stack-3 end"><b class="mono sm">{{ item.cobro.cronometro }}</b><small class="mono">{{ item.cobro.total | moneda }}</small></span>
+        </button>
+      }
+    </div>
+    <a class="sp-underline push" routerLink="/panel/dentro">Ver todos los vehículos</a>
+  </section>
+
+  <section class="sp-card">
+    <div class="sp-card-head"><h2>Últimos movimientos</h2></div>
+    <div class="sp-list">
+      @for (m of ultimosMovimientos(); track $index) {
+        <div class="sp-list-row moves">
+          <span class="mono muted sm">{{ m.horaTexto }}</span>
+          <span class="sp-plate">{{ m.placa }}</span>
+          <span class="dir" [class.in]="m.esEntrada">{{ m.esEntrada ? '→ Entrada' : '← Salida' }}</span>
+          <span class="mono strong right">{{ m.valor }}</span>
+        </div>
+      }
+    </div>
+    <a class="sp-underline push" routerLink="/panel/historial">Ver historial</a>
+  </section>
+
+  <section class="sp-card dark">
+    <div class="sp-card-head dashed"><h2>Caja del turno</h2><span class="meta-text">{{ porterosTurno() }}</span></div>
+    <div class="sp-stack-8"><span class="sp-kicker light">Debe haber en caja</span><b class="sp-cash-big">{{ caja.resumen().esperado | moneda }}</b></div>
+    <div class="push">
+      @for (pago of pagosPorMetodo(); track pago.etiqueta) { <div class="sp-ledger"><span>{{ pago.etiqueta }}</span><b>{{ pago.valor | moneda }}</b></div> }
+    </div>
+    <a class="sp-btn light block" routerLink="/panel/caja">Hacer cuadre de caja</a>
+  </section>
+</div>
