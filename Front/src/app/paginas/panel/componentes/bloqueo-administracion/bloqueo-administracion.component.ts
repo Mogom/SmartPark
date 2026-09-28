@@ -1,7 +1,7 @@
 import { Component, OnDestroy, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { map, of, switchMap } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
+import { CONFIGURACION_APP } from '../../../../nucleo/configuracion/configuracion-app';
 import { PIPES_FORMATO } from '../../../../compartido/pipes/formato.pipes';
 import { UsuariosService } from '../../estado';
 
@@ -15,7 +15,7 @@ type Paso = 'CONTRASENA' | 'ENVIAR_CODIGO' | 'CODIGO';
 })
 export class BloqueoAdministracionComponent implements OnDestroy {
   protected readonly usuarios = inject(UsuariosService);
-  protected readonly modoEjemplo = environment.usarDatosEjemplo;
+  protected readonly modoEjemplo = inject(CONFIGURACION_APP).usarDatosEjemplo;
 
   readonly texto = input('Esta sección requiere la contraseña de administración.');
 

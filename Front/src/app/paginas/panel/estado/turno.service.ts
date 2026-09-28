@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { environment } from '../../../../environments/environment';
+import { CONFIGURACION_APP } from '../../../nucleo/configuracion/configuracion-app';
 import { SolicitudAutorizacion } from '../../../nucleo/modelos';
 import { SesionService } from '../../../nucleo/servicios/sesion.service';
 import { BASE_CAJA_EJEMPLO, PORTEROS_EN_TURNO_EJEMPLO, SEDE_EJEMPLO, inicioTurnoEjemplo } from './datos-ejemplo';
@@ -8,7 +8,7 @@ import { BASE_CAJA_EJEMPLO, PORTEROS_EN_TURNO_EJEMPLO, SEDE_EJEMPLO, inicioTurno
 @Injectable()
 export class TurnoService {
   private readonly sesion = inject(SesionService);
-  private readonly modoEjemplo = environment.usarDatosEjemplo;
+  private readonly modoEjemplo = inject(CONFIGURACION_APP).usarDatosEjemplo;
 
   readonly sede = computed(() => this.modoEjemplo ? SEDE_EJEMPLO : this.sesion.sede());
   readonly porterosEnTurno = signal<string[]>(this.modoEjemplo ? PORTEROS_EN_TURNO_EJEMPLO : []);

@@ -4,6 +4,7 @@ import { ErrorHandler } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { CONFIGURACION_APP } from '../../nucleo/configuracion/configuracion-app';
 import { RUTAS_PANEL } from './panel.routes';
 
 /** Renderiza cada vista del panel con los datos de ejemplo y verifica que no haya errores. */
@@ -17,6 +18,7 @@ describe('Rutas del panel', () => {
         provideRouter([{ path: 'panel', children: RUTAS_PANEL }]),
         provideHttpClient(),
         provideHttpClientTesting(),
+        { provide: CONFIGURACION_APP, useValue: { apiUrl: '/api', usarDatosEjemplo: true } },
         { provide: ErrorHandler, useValue: { handleError: (e: unknown) => errores.push(e) } },
       ],
     });

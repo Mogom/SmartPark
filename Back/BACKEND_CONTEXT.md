@@ -96,7 +96,7 @@ La version en la URL permite crear una futura `/api/v2` sin romper inmediatament
 
 ### `config`
 
-`WebConfig` configura CORS para permitir que Angular, ejecutandose en `http://localhost:4200`, consuma la API que corre en `http://localhost:8080`.
+`WebConfig` configura CORS para permitir que Angular, ejecutandose en `http://localhost:4200`, consuma la API local. Actualmente ese es el unico origen permitido; para consumir la API desde un frontend desplegado, se debe agregar su origen a `allowedOrigins`.
 
 ## 4. Flujo de una solicitud
 
@@ -221,6 +221,22 @@ La API queda disponible en:
 ```text
 http://localhost:8080
 ```
+
+### API desplegada
+
+El backend desplegado en Render tiene esta URL base:
+
+```text
+https://smartpark-fzas.onrender.com/api/v1
+```
+
+Por ejemplo, para consultar los conjuntos residenciales:
+
+```bash
+curl https://smartpark-fzas.onrender.com/api/v1/complexes
+```
+
+Usa la URL local al ejecutar el backend con Maven y la URL de Render para consumir el despliegue. Si Angular se ejecuta en un dominio distinto de `http://localhost:4200`, ese origen debe estar permitido en la configuracion CORS del backend.
 
 El frontend Angular, por defecto, se ejecuta en:
 

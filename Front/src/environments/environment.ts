@@ -1,8 +1,8 @@
 /** Configuración de producción. */
 export const environment = {
   produccion: true,
-  /** URL base del backend (Spring Boot). */
-  apiUrl: '/api',
-  /** true = la app usa datos de ejemplo en memoria y no llama al backend. */
+  /** Backend desplegado en Render. */
+  apiUrl: 'https://smartpark-fzas.onrender.com/api',
+  /** true = trabajar sin backend, con datos de ejemplo en memoria. */
   usarDatosEjemplo: false,
 };

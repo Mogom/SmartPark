@@ -7,7 +7,7 @@ import { AutenticacionApiService } from '../../../nucleo/api';
 import { NotificacionesService } from '../../../nucleo/servicios/notificaciones.service';
 import { SesionService } from '../../../nucleo/servicios/sesion.service';
 import { errorYaNotificado, formatoHoraConSegundos, nombreCorto } from '../../../nucleo/utilidades';
-import { environment } from '../../../../environments/environment';
+import { CONFIGURACION_APP } from '../../../nucleo/configuracion/configuracion-app';
 import { ModalTicketComponent } from '../componentes/modal-ticket/modal-ticket.component';
 import { ModalTurnoComponent } from '../componentes/modal-turno/modal-turno.component';
 import { CajaService, RelojService, TurnoService, UsuariosService, VisitasService } from '../estado';
@@ -47,6 +47,7 @@ export class PanelEstructuraComponent implements OnInit {
   private readonly sesion = inject(SesionService);
   private readonly autenticacionApi = inject(AutenticacionApiService);
   private readonly router = inject(Router);
+  private readonly modoEjemplo = inject(CONFIGURACION_APP).usarDatosEjemplo;
 
   protected readonly menu = MENU_PANEL;
   protected readonly confirmandoSalida = signal(false);
@@ -84,7 +85,7 @@ export class PanelEstructuraComponent implements OnInit {
   protected cerrarSesion() {
     this.confirmandoSalida.set(false);
     this.usuarios.bloquearAdministracion();
-    if (!environment.usarDatosEjemplo) this.autenticacionApi.cerrarSesion().subscribe({ error: errorYaNotificado });
+    if (!this.modoEjemplo) this.autenticacionApi.cerrarSesion().subscribe({ error: errorYaNotificado });
     this.sesion.cerrar();
     this.router.navigate(['/login']);
   }

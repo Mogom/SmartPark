@@ -1,14 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { CONFIGURACION_APP } from '../configuracion/configuracion-app';
 import { RegistroSalida, SolicitudEntrada, SolicitudSalida, Vehiculo } from '../modelos';
 
 /** /api/visitas — entradas y salidas de vehículos visitantes. */
 @Injectable({ providedIn: 'root' })
 export class VisitasApiService {
   private readonly http = inject(HttpClient);
-  private readonly url = `${environment.apiUrl}/visitas`;
+  private readonly url = `${inject(CONFIGURACION_APP).apiUrl}/visitas`;
 
   listarDentro(): Observable<Vehiculo[]> {
     return this.http.get<Vehiculo[]>(`${this.url}/dentro`);

@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, of, tap } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { CONFIGURACION_APP } from '../../../nucleo/configuracion/configuracion-app';
 import { VisitasApiService } from '../../../nucleo/api';
 import { FormularioEntrada, MetodoPago, RegistroSalida, SolicitudEntrada, SolicitudSalida, Vehiculo } from '../../../nucleo/modelos';
 import { PATRON_PLACA, TIPOS_VEHICULO, errorYaNotificado, formatoPlaca, inicioDelDia } from '../../../nucleo/utilidades';
@@ -16,7 +16,7 @@ export class VisitasService {
   private readonly tarifas = inject(TarifasService);
   private readonly turno = inject(TurnoService);
   private readonly tickets = inject(TicketService);
-  private readonly usarApi = !environment.usarDatosEjemplo;
+  private readonly usarApi = !inject(CONFIGURACION_APP).usarDatosEjemplo;
   private siguienteIdEjemplo = 101;
 
   readonly dentro = signal<Vehiculo[]>([]);
