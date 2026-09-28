@@ -24,9 +24,9 @@ SmartPark es una solución completa diseñada para facilitar la administración 
 
 | Colaborador | Rol |
 |-------------|-----|
-| Cristian Arrieta | Desarrollador |
-| Violeta Rojas | Desarrolladora |
-| Kevin Palacios | Desarrollador |
+| Cristian Arrieta | DB Master |
+| Violeta Rojas | Front Lead |
+| Kevin Palacios | Backend Lead |
 
 ## Estructura del Proyecto
 
