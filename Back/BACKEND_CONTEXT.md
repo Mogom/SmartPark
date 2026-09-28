@@ -4,13 +4,14 @@
 
 SmartPark es un aplicativo para administrar los parqueaderos de conjuntos residenciales. El backend expone una API REST que puede ser consumida por el frontend desarrollado en Angular.
 
-En esta primera etapa no existe una base de datos. Por eso, los datos se encuentran definidos en memoria como mocks. La API mantiene las mismas responsabilidades y rutas que tendria una implementacion conectada a PostgreSQL, de forma que el frontend pueda avanzar desde ahora.
+El backend persiste sus datos en MongoDB. Los documentos de demostracion se cargan automaticamente cuando cada coleccion esta vacia; los servicios y las rutas de la API mantienen las responsabilidades que consume Angular.
 
 ## 2. Tecnologias utilizadas
 
 - **Kotlin**: lenguaje principal del backend.
 - **Spring Boot**: framework para crear la aplicacion web y la API REST.
 - **Spring Web**: permite crear controladores con rutas HTTP.
+- **Spring Data MongoDB**: mapea los modelos a colecciones y ejecuta consultas.
 - **Jackson Kotlin**: convierte objetos Kotlin a JSON y JSON a objetos Kotlin.
 - **Maven**: administra dependencias y ejecuta la compilacion.
 - **Java 17**: version utilizada para ejecutar el proyecto.
@@ -31,7 +32,7 @@ Back/
     domain/
       ParkingModels.kt
     repository/
-      MockRepositories.kt
+      MockRepositories.kt (MongoTemplate)
     service/
       ParkingService.kt
     web/
@@ -62,11 +63,11 @@ Tambien contiene los estados validos:
 
 ### `repository`
 
-Contiene el acceso a los datos. Actualmente las clases tienen listas internas con datos quemados.
+Contiene el acceso a los datos mediante `MongoTemplate`.
 
-Por ejemplo, `ComplexRepository` devuelve los conjuntos definidos en una lista y `ReservationRepository` permite consultar o agregar reservas en memoria.
+Los modelos se guardan en las colecciones `complexes`, `residents`, `vehicles`, `parking_spaces` y `reservations`. Las reservas reciben identificadores secuenciales mediante un documento contador.
 
-Esta capa es importante porque aisla el origen de los datos. En el futuro se pueden reemplazar estas clases por repositorios JPA conectados a PostgreSQL sin tener que cambiar las rutas del controlador.
+Esta capa aisla el origen de los datos y evita que los controladores dependan directamente de MongoDB.
 
 ### `service`
 
@@ -122,20 +123,20 @@ Ejemplo para consultar los espacios disponibles:
 
 Todas las rutas empiezan con `/api/v1`.
 
-| Metodo | Ruta | Descripcion |
-| --- | --- | --- |
-| GET | `/complexes` | Lista todos los conjuntos residenciales. |
-| GET | `/complexes/{id}` | Consulta un conjunto por su identificador. |
-| GET | `/residents` | Lista todos los residentes. |
-| GET | `/residents?complexId=1` | Filtra residentes por conjunto. |
-| GET | `/vehicles` | Lista todos los vehiculos. |
-| GET | `/vehicles?complexId=1&residentId=1` | Filtra vehiculos por conjunto o residente. |
-| GET | `/parking-spaces` | Lista espacios de parqueadero. |
-| GET | `/parking-spaces?complexId=1&status=AVAILABLE` | Filtra espacios por conjunto y estado. |
-| GET | `/reservations` | Lista reservas. |
-| GET | `/reservations?complexId=1&status=ACTIVE` | Filtra reservas por conjunto y estado. |
-| POST | `/reservations` | Crea una reserva en memoria. |
-| GET | `/dashboard/summary?complexId=1` | Devuelve indicadores del conjunto. |
+| Metodo | Ruta                                           | Descripcion                                |
+| ------ | ---------------------------------------------- | ------------------------------------------ |
+| GET    | `/complexes`                                   | Lista todos los conjuntos residenciales.   |
+| GET    | `/complexes/{id}`                              | Consulta un conjunto por su identificador. |
+| GET    | `/residents`                                   | Lista todos los residentes.                |
+| GET    | `/residents?complexId=1`                       | Filtra residentes por conjunto.            |
+| GET    | `/vehicles`                                    | Lista todos los vehiculos.                 |
+| GET    | `/vehicles?complexId=1&residentId=1`           | Filtra vehiculos por conjunto o residente. |
+| GET    | `/parking-spaces`                              | Lista espacios de parqueadero.             |
+| GET    | `/parking-spaces?complexId=1&status=AVAILABLE` | Filtra espacios por conjunto y estado.     |
+| GET    | `/reservations`                                | Lista reservas.                            |
+| GET    | `/reservations?complexId=1&status=ACTIVE`      | Filtra reservas por conjunto y estado.     |
+| POST   | `/reservations`                                | Crea una reserva en memoria.               |
+| GET    | `/dashboard/summary?complexId=1`               | Devuelve indicadores del conjunto.         |
 
 ## 6. Ejemplos de consumo
 
@@ -186,10 +187,9 @@ La respuesta contiene la reserva creada con un nuevo `id` y estado `PENDING`.
 Desde Angular, el consumo equivalente puede hacerse con `HttpClient`:
 
 ```typescript
-this.http.get<ParkingSpace[]>(
-  'http://localhost:8080/api/v1/parking-spaces',
-  { params: { complexId: 1, status: 'AVAILABLE' } }
-);
+this.http.get<ParkingSpace[]>("http://localhost:8080/api/v1/parking-spaces", {
+  params: { complexId: 1, status: "AVAILABLE" },
+});
 ```
 
 ## 7. Validaciones y errores

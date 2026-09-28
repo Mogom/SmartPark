@@ -1,82 +1,85 @@
 package co.smartpark.repository
 
 import co.smartpark.domain.*
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.FindAndModifyOptions
+import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.Update
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
-import java.util.concurrent.atomic.AtomicLong
 
 @Repository
-class ComplexRepository {
-    private val complexes = listOf(
-        ResidentialComplex(1, "Conjunto Los Cedros", "Carrera 15 # 102-20", 36),
-        ResidentialComplex(2, "Torres del Parque", "Calle 80 # 20-11", 52)
-    )
-
-    fun findAll(): List<ResidentialComplex> = complexes
-    fun findById(id: Long): ResidentialComplex? = complexes.find { it.id == id }
+class ComplexRepository(private val mongo: MongoTemplate) {
+    fun findAll(): List<ResidentialComplex> = mongo.findAll(ResidentialComplex::class.java)
+    fun findById(id: Long): ResidentialComplex? = mongo.findById(id, ResidentialComplex::class.java)
 }
 
 @Repository
-class ResidentRepository {
-    private val residents = listOf(
-        Resident(1, "Laura Martinez", "Torre 1 - 402", "laura.martinez@example.com", 1),
-        Resident(2, "Andres Gomez", "Torre 2 - 1103", "andres.gomez@example.com", 1),
-        Resident(3, "Camila Rojas", "Torre A - 605", "camila.rojas@example.com", 2)
-    )
+class ResidentRepository(private val mongo: MongoTemplate) {
+    fun findAll(complexId: Long?): List<Resident> {
+        val query = Query()
+        if (complexId != null) query.addCriteria(Criteria.where("complexId").`is`(complexId))
+        return mongo.find(query, Resident::class.java)
+    }
 
-    fun findAll(complexId: Long?): List<Resident> = residents.filter { complexId == null || it.complexId == complexId }
-    fun exists(id: Long): Boolean = residents.any { it.id == id }
+    fun exists(id: Long): Boolean = mongo.exists(Query.query(Criteria.where("_id").`is`(id)), Resident::class.java)
 }
 
 @Repository
-class VehicleRepository {
-    private val vehicles = listOf(
-        Vehicle(1, "ABC123", VehicleType.CAR, "Mazda 3", "Blanco", 1, 1),
-        Vehicle(2, "MTR45F", VehicleType.MOTORCYCLE, "Yamaha", "Negro", 2, 1),
-        Vehicle(3, "XYZ789", VehicleType.CAR, "Renault Duster", "Gris", 3, 2)
-    )
-
-    fun findAll(complexId: Long?, residentId: Long?): List<Vehicle> = vehicles.filter {
-        (complexId == null || it.complexId == complexId) && (residentId == null || it.residentId == residentId)
+class VehicleRepository(private val mongo: MongoTemplate) {
+    fun findAll(complexId: Long?, residentId: Long?): List<Vehicle> {
+        val criteria = mutableListOf<Criteria>()
+        if (complexId != null) criteria.add(Criteria.where("complexId").`is`(complexId))
+        if (residentId != null) criteria.add(Criteria.where("residentId").`is`(residentId))
+        val query = Query()
+        criteria.forEach(query::addCriteria)
+        return mongo.find(query, Vehicle::class.java)
     }
 
-    fun exists(id: Long): Boolean = vehicles.any { it.id == id }
+    fun exists(id: Long): Boolean = mongo.exists(Query.query(Criteria.where("_id").`is`(id)), Vehicle::class.java)
 }
 
 @Repository
-class ParkingSpaceRepository {
-    private val spaces = (1L..10L).map { id ->
-        ParkingSpace(id, "P-${id.toString().padStart(2, '0')}", if (id <= 5) 1 else 2,
-            when (id) {
-                2L, 7L -> ParkingSpaceStatus.OCCUPIED
-                4L -> ParkingSpaceStatus.RESERVED
-                else -> ParkingSpaceStatus.AVAILABLE
-            }, if (id <= 6) 1 else 2, if (id == 2L) 1 else null)
+class ParkingSpaceRepository(private val mongo: MongoTemplate) {
+    fun findAll(complexId: Long?, status: ParkingSpaceStatus?): List<ParkingSpace> {
+        val query = Query()
+        if (complexId != null) query.addCriteria(Criteria.where("complexId").`is`(complexId))
+        if (status != null) query.addCriteria(Criteria.where("status").`is`(status))
+        return mongo.find(query, ParkingSpace::class.java)
     }
 
-    fun findAll(complexId: Long?, status: ParkingSpaceStatus?): List<ParkingSpace> = spaces.filter {
-        (complexId == null || it.complexId == complexId) && (status == null || it.status == status)
-    }
-
-    fun exists(id: Long): Boolean = spaces.any { it.id == id }
+    fun exists(id: Long): Boolean = mongo.exists(Query.query(Criteria.where("_id").`is`(id)), ParkingSpace::class.java)
 }
 
 @Repository
-class ReservationRepository {
-    private val sequence = AtomicLong(3)
-    private val reservations = mutableListOf(
-        Reservation(1, 4, 1, 1, 1, LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(2), ReservationStatus.ACTIVE),
-        Reservation(2, 7, 3, 3, 2, LocalDateTime.now().plusHours(3), LocalDateTime.now().plusHours(5), ReservationStatus.PENDING)
-    )
-
-    fun findAll(complexId: Long?, status: ReservationStatus?): List<Reservation> = synchronized(reservations) {
-        reservations.filter { (complexId == null || it.complexId == complexId) && (status == null || it.status == status) }
+class ReservationRepository(private val mongo: MongoTemplate) {
+    fun findAll(complexId: Long?, status: ReservationStatus?): List<Reservation> {
+        val query = Query()
+        if (complexId != null) query.addCriteria(Criteria.where("complexId").`is`(complexId))
+        if (status != null) query.addCriteria(Criteria.where("status").`is`(status))
+        return mongo.find(query, Reservation::class.java)
     }
 
-    fun save(request: CreateReservationRequest): Reservation = synchronized(reservations) {
-        val reservation = Reservation(sequence.incrementAndGet(), request.parkingSpaceId, request.vehicleId,
-            request.residentId, request.complexId, request.startsAt, request.endsAt, ReservationStatus.PENDING)
-        reservations.add(reservation)
-        reservation
+    fun save(request: CreateReservationRequest): Reservation {
+        val counter = mongo.findAndModify(
+            Query.query(Criteria.where("_id").`is`("reservation")),
+            Update().inc("value", 1),
+            FindAndModifyOptions.options().upsert(true).returnNew(true),
+            SequenceCounter::class.java
+        ) ?: throw IllegalStateException("No se pudo generar el identificador de la reserva")
+
+        return mongo.insert(Reservation(
+            counter.value,
+            request.parkingSpaceId,
+            request.vehicleId,
+            request.residentId,
+            request.complexId,
+            request.startsAt,
+            request.endsAt,
+            ReservationStatus.PENDING
+        ))
     }
 }
+
+data class SequenceCounter(@Id val id: String, val value: Long)
