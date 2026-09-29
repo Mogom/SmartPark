@@ -13,14 +13,22 @@ npm run build      # compilación de producción en dist/
 
 ## Conexión con el backend
 
-En desarrollo el front usa el backend local. Arranca primero el backend y luego el front:
+El front usa el backend desplegado en Render (`https://smartpark-fzas.onrender.com`):
+
+```bash
+cd Front && npm start                 # http://localhost:4200 → API de Render
+```
+
+Las peticiones a `/api` se redirigen a Render con `proxy.conf.json`, así que no hace falta CORS en desarrollo.
+En el plan gratuito, Render apaga el servicio tras un rato sin uso: la primera petición puede tardar ~1 minuto.
+
+Para probar cambios del backend en tu PC antes de desplegarlos:
 
 ```bash
 cd Back && ./mvnw spring-boot:run     # API en http://localhost:8080
-cd Front && npm start                 # http://localhost:4200
+cd Front && npm run start:local       # usa proxy.local.conf.json → localhost:8080
 ```
 
-Las peticiones a `/api` se redirigen a `localhost:8080` con `proxy.conf.json`, así que no hace falta CORS en desarrollo.
 Usuarios de prueba: administración Martha Gómez `9999`; porteros Carlos Mejía `1234`, Diana Rojas `5678`, Luis Herrera `0000`.
 
 `src/environments/environment.development.ts` → `usarDatosEjemplo`:
