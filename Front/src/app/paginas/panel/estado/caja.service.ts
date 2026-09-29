@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, of, tap } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { CONFIGURACION_APP } from '../../../nucleo/configuracion/configuracion-app';
 import { TurnosApiService } from '../../../nucleo/api';
 import { CierreTurno, MetodoPago, ResumenTurno, SolicitudCierreTurno } from '../../../nucleo/modelos';
 import { errorYaNotificado, inicioDelDia, sumar } from '../../../nucleo/utilidades';
@@ -15,7 +15,7 @@ export class CajaService {
   private readonly visitas = inject(VisitasService);
   private readonly turno = inject(TurnoService);
   private readonly tickets = inject(TicketService);
-  private readonly usarApi = !environment.usarDatosEjemplo;
+  private readonly usarApi = !inject(CONFIGURACION_APP).usarDatosEjemplo;
 
   readonly cierres = signal<CierreTurno[]>([]);
 

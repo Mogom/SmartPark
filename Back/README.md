@@ -4,10 +4,11 @@ API REST en Spring Boot y Kotlin. Actualmente usa repositorios en memoria para q
 
 ## Ejecutar
 
-Desde esta carpeta:
+Desde esta carpeta (necesita Java 17; Maven no hace falta, lo descarga el wrapper):
 
 ```bash
-mvn spring-boot:run
+./mvnw spring-boot:run     # Windows (cmd/PowerShell): mvnw.cmd spring-boot:run
+./mvnw test                # pruebas
 ```
 
 La API queda disponible en `http://localhost:8080`.
@@ -39,3 +40,34 @@ Ejemplo de reserva:
   "endsAt": "2026-09-24T20:00:00"
 }
 ```
+
+## Parqueadero de visitantes (lo que usa el front)
+
+Paquete `co.smartpark.visitantes` (`dominio`, `repositorio`, `servicio`, `web`). Rutas bajo `/api`, con el mismo contrato JSON que `Front/src/app/nucleo/modelos`. Datos en memoria (`DatosIniciales.kt`) hasta tener base de datos.
+
+- **Sesión**: `POST /api/autenticacion/login` devuelve un token. Las demás rutas piden `Authorization: Bearer <token>`, salvo `POST /api/solicitudes-demo` (formulario público del landing).
+- **Errores**: siempre `{ "mensaje": "..." }` con el código HTTP correspondiente (400, 401, 404, 409).
+- **Fechas**: epoch en milisegundos.
+- **Contraseñas**: se guardan cifradas (SHA-256 con sal). Para producción, cambiar a BCrypt.
+- **Recuperación de contraseña**: por ahora el código de 6 dígitos se escribe en el log del servidor; falta enviarlo por correo o SMS.
+
+Usuarios de prueba: Martha Gómez `9999` (administración); porteros Carlos Mejía `1234`, Diana Rojas `5678`, Luis Herrera `0000`.
+
+| Metodo | Ruta | Uso |
+| --- | --- | --- |
+| POST | `/api/autenticacion/login` | Iniciar sesión (usuario = nombre, correo o teléfono) |
+| POST | `/api/autenticacion/logout` | Cerrar sesión |
+| POST | `/api/autenticacion/verificar` | Confirmar contraseña de un portero |
+| POST | `/api/autenticacion/verificar-administrador` | Confirmar contraseña de administración |
+| POST | `/api/autenticacion/codigo` | Generar código de recuperación |
+| POST | `/api/autenticacion/verificar-codigo` | Validar el código |
+| POST | `/api/autenticacion/restablecer` | Cambiar la contraseña con el código |
+| GET | `/api/visitas/dentro` | Vehículos dentro |
+| GET | `/api/visitas/salidas?desde=` | Salidas desde una fecha |
+| POST | `/api/visitas` | Registrar entrada |
+| POST | `/api/visitas/{id}/salida` | Registrar salida y cobro |
+| GET / POST / DELETE | `/api/usuarios`, `/api/usuarios/{id}` | Porteros y administradores |
+| GET / PUT | `/api/tarifas`, `/api/tarifas/{tipo}` | Valor hora, tope diario y cupos |
+| GET / POST | `/api/turnos/cierres` | Cierres de caja del turno |
+| GET | `/api/reportes/recaudo-mensual?anio=` | Recaudo por mes |
+| POST | `/api/solicitudes-demo` | Formulario "Solicitar demo" (público) |

@@ -1,14 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { CONFIGURACION_APP } from '../configuracion/configuracion-app';
 import { ResumenMes } from '../modelos';
 
 /** /api/reportes — recaudo histórico. */
 @Injectable({ providedIn: 'root' })
 export class ReportesApiService {
   private readonly http = inject(HttpClient);
-  private readonly url = `${environment.apiUrl}/reportes`;
+  private readonly url = `${inject(CONFIGURACION_APP).apiUrl}/reportes`;
 
   recaudoMensual(anio: number): Observable<ResumenMes[]> {
     const params = new HttpParams().set('anio', anio);

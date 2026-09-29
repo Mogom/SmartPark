@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { CONFIGURACION_APP } from '../configuracion/configuracion-app';
 import { SolicitudUsuario, Usuario } from '../modelos';
 
 /** /api/usuarios — porteros y administradores. */
 @Injectable({ providedIn: 'root' })
 export class UsuariosApiService {
   private readonly http = inject(HttpClient);
-  private readonly url = `${environment.apiUrl}/usuarios`;
+  private readonly url = `${inject(CONFIGURACION_APP).apiUrl}/usuarios`;
 
   listar(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(this.url);

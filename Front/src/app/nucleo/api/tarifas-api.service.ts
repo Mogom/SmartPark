@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { CONFIGURACION_APP } from '../configuracion/configuracion-app';
 import { ConfiguracionTarifa, Tarifas, TipoVehiculo } from '../modelos';
 
 /** /api/tarifas — valor hora, tope diario y cupos por tipo de vehículo. */
 @Injectable({ providedIn: 'root' })
 export class TarifasApiService {
   private readonly http = inject(HttpClient);
-  private readonly url = `${environment.apiUrl}/tarifas`;
+  private readonly url = `${inject(CONFIGURACION_APP).apiUrl}/tarifas`;
 
   obtener(): Observable<Tarifas> {
     return this.http.get<Tarifas>(this.url);

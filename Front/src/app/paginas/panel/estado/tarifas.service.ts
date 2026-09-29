@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { of } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { CONFIGURACION_APP } from '../../../nucleo/configuracion/configuracion-app';
 import { TarifasApiService } from '../../../nucleo/api';
 import { CalculoCobro, CampoTarifa, Tarifas, TipoVehiculo, Vehiculo } from '../../../nucleo/modelos';
 import {
@@ -19,7 +19,7 @@ const TARIFAS_VACIAS: Tarifas = {
 export class TarifasService {
   private readonly api = inject(TarifasApiService);
   private readonly reloj = inject(RelojService);
-  private readonly usarApi = !environment.usarDatosEjemplo;
+  private readonly usarApi = !inject(CONFIGURACION_APP).usarDatosEjemplo;
 
   readonly tarifas = signal<Tarifas>(this.usarApi ? TARIFAS_VACIAS : TARIFAS_EJEMPLO);
   /** Minutos iniciales que no se cobran. */

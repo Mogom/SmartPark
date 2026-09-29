@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { environment } from '../../../environments/environment';
+import { CONFIGURACION_APP } from '../../nucleo/configuracion/configuracion-app';
 import { AutenticacionApiService } from '../../nucleo/api';
 import { mensajeDeError } from '../../nucleo/interceptores/errores-http.interceptor';
 import { SesionService } from '../../nucleo/servicios/sesion.service';
@@ -19,7 +19,7 @@ export class LoginComponent {
   private readonly autenticacionApi = inject(AutenticacionApiService);
   private readonly sesion = inject(SesionService);
 
-  protected readonly modoEjemplo = environment.usarDatosEjemplo;
+  protected readonly modoEjemplo = inject(CONFIGURACION_APP).usarDatosEjemplo;
   protected readonly subtitulo = this.modoEjemplo ? 'Conjunto Altos del Parque' : 'Portería y administración';
 
   protected usuario = '';

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { environment } from '../../../environments/environment';
+import { CONFIGURACION_APP } from '../../nucleo/configuracion/configuracion-app';
 import { SolicitudesDemoApiService } from '../../nucleo/api';
 import { mensajeDeError } from '../../nucleo/interceptores/errores-http.interceptor';
 import { SolicitudDemo } from '../../nucleo/modelos';
@@ -36,6 +36,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly anfitrion = inject(ElementRef<HTMLElement>);
   private readonly zona = inject(NgZone);
   private readonly solicitudesDemoApi = inject(SolicitudesDemoApiService);
+  private readonly modoEjemplo = inject(CONFIGURACION_APP).usarDatosEjemplo;
 
   private readonly cargadoEn = Date.now();
   private intervaloReloj?: ReturnType<typeof setInterval>;
@@ -110,7 +111,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     if (error) return this.error.set(error);
     this.error.set('');
 
-    if (environment.usarDatosEjemplo) {
+    if (this.modoEjemplo) {
       this.enviado.set(true);
       return;
     }

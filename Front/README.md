@@ -11,15 +11,25 @@ npm test           # pruebas unitarias
 npm run build      # compilación de producción en dist/
 ```
 
-## Datos de ejemplo o backend
+## Conexión con el backend
+
+En desarrollo el front usa el backend local. Arranca primero el backend y luego el front:
+
+```bash
+cd Back && ./mvnw spring-boot:run     # API en http://localhost:8080
+cd Front && npm start                 # http://localhost:4200
+```
+
+Las peticiones a `/api` se redirigen a `localhost:8080` con `proxy.conf.json`, así que no hace falta CORS en desarrollo.
+Usuarios de prueba: administración Martha Gómez `9999`; porteros Carlos Mejía `1234`, Diana Rojas `5678`, Luis Herrera `0000`.
 
 `src/environments/environment.development.ts` → `usarDatosEjemplo`:
 
-- `true` (actual): la app funciona sin backend, con datos en memoria (`paginas/panel/estado/datos-ejemplo.ts`). Se pierden al recargar.
-  Usuarios de prueba: administración Martha Gómez `9999`; porteros Carlos Mejía `1234`, Diana Rojas `5678`, Luis Herrera `0000`.
-- `false`: todas las operaciones llaman a la API. En desarrollo, `/api` se redirige a `http://localhost:8080` (Spring Boot) con `proxy.conf.json`.
+- `false` (actual): todas las operaciones llaman a la API.
+- `true`: la app funciona sin backend, con datos en memoria (`paginas/panel/estado/datos-ejemplo.ts`). Se pierden al recargar.
 
-En producción (`environment.ts`) siempre se usa la API.
+En producción (`environment.ts`) se usa el backend desplegado en Render (`https://smartpark-fzas.onrender.com/api`).
+La configuración se lee con el token `CONFIGURACION_APP` (`nucleo/configuracion`), que las pruebas pueden reemplazar.
 
 ## Estructura
 
@@ -29,6 +39,7 @@ src/app/
     modelos/                  interfaces = contrato JSON con el backend
     api/                      un servicio HTTP por recurso (*-api.service.ts)
     interceptores/            token de sesión y manejo de errores HTTP
+    configuracion/            CONFIGURACION_APP (apiUrl, usarDatosEjemplo)
     guardas/                  sesion.guard (protege /panel)
     servicios/                sesión y notificaciones globales
     utilidades/               formatos, validaciones, cálculo de cobro, constantes

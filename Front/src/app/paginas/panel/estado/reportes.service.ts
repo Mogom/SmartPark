@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { environment } from '../../../../environments/environment';
+import { CONFIGURACION_APP } from '../../../nucleo/configuracion/configuracion-app';
 import { ReportesApiService } from '../../../nucleo/api';
 import { ResumenMes } from '../../../nucleo/modelos';
 import { errorYaNotificado, sumar } from '../../../nucleo/utilidades';
@@ -13,7 +13,7 @@ export class ReportesService {
   private readonly api = inject(ReportesApiService);
   private readonly visitas = inject(VisitasService);
   private readonly reloj = inject(RelojService);
-  private readonly usarApi = !environment.usarDatosEjemplo;
+  private readonly usarApi = !inject(CONFIGURACION_APP).usarDatosEjemplo;
 
   private readonly recaudoApi = signal<ResumenMes[]>([]);
 

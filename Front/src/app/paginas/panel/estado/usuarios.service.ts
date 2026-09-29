@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, map, of, tap } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { CONFIGURACION_APP } from '../../../nucleo/configuracion/configuracion-app';
 import { AutenticacionApiService, UsuariosApiService } from '../../../nucleo/api';
 import { FormularioUsuario, SolicitudUsuario, Usuario } from '../../../nucleo/modelos';
 import { errorYaNotificado, esContactoValido, soloDigitos } from '../../../nucleo/utilidades';
@@ -15,7 +15,7 @@ export class UsuariosService {
   private readonly api = inject(UsuariosApiService);
   private readonly autenticacionApi = inject(AutenticacionApiService);
   private readonly turno = inject(TurnoService);
-  private readonly usarApi = !environment.usarDatosEjemplo;
+  private readonly usarApi = !inject(CONFIGURACION_APP).usarDatosEjemplo;
 
   /** Solo en modo de ejemplo: contraseñas y códigos de recuperación en memoria. */
   private readonly contrasenasEjemplo = new Map(Object.entries(CONTRASENAS_EJEMPLO));

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { CONFIGURACION_APP } from '../configuracion/configuracion-app';
 import { CredencialesLogin, RespuestaLogin, SolicitudRestablecer } from '../modelos';
 
 export interface RespuestaVerificacion {
@@ -13,7 +13,7 @@ export interface RespuestaVerificacion {
 @Injectable({ providedIn: 'root' })
 export class AutenticacionApiService {
   private readonly http = inject(HttpClient);
-  private readonly url = `${environment.apiUrl}/autenticacion`;
+  private readonly url = `${inject(CONFIGURACION_APP).apiUrl}/autenticacion`;
 
   iniciarSesion(credenciales: CredencialesLogin): Observable<RespuestaLogin> {
     return this.http.post<RespuestaLogin>(`${this.url}/login`, credenciales);
